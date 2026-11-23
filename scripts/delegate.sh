@@ -42,7 +42,9 @@ then print your summary (files changed, decisions, anything unresolved)."
 # run anything (npm install, builds) without prompts: your call, it's confined
 # to the worktree only by convention.
 perm=${DELEGATE_PERMISSION:-accept-edits}
-args=(-p "$prompt" --permission-mode "$perm" --skip-onboarding --max-turns "${DELEGATE_MAX_TURNS:-80}"
+# -p withholds write/shell tools unless --tools-all; the permission mode still
+# governs what they may do.
+args=(-p "$prompt" --permission-mode "$perm" --tools-all --skip-onboarding --max-turns "${DELEGATE_MAX_TURNS:-80}"
       --add-dir "$(dirname "$repo")/zotquicksearch")
 [[ -n $model ]] && args+=(-m "$model")
 
@@ -57,8 +59,14 @@ tail -n 30 "$log"
 
 echo "== checks"
 cd "$wt"
-[[ -d node_modules ]] || npm install --silent >/dev/null 2>&1
-for check in build test:unit; do
+if [[ ! -f package.json ]]; then
+  echo "SKIP checks: no package.json (agent made no scaffold)"
+  checks=()
+else
+  [[ -d node_modules ]] || npm install --silent >/dev/null 2>&1
+  checks=(build test:unit)
+fi
+for check in "${checks[@]}"; do
   if npm run -s "$check" >"$logdir/$task.$check.log" 2>&1; then
     echo "PASS $check"
   else
