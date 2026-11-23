@@ -14,7 +14,10 @@ export function wordsFrom(text: string): string[];
 
 /** True when tokens is non-empty and every token is a prefix of at least
  *  one word. Order doesn't matter; one word may satisfy several tokens. */
-export function rowMatches(tokens: readonly string[], words: readonly string[]): boolean;
+export function rowMatches(
+  tokens: readonly string[],
+  words: readonly string[],
+): boolean;
 
 /** Index of the next row matching tokens, or -1.
  *  Starts at `from` (clamped/treated as 0 if out of range) and moves by
@@ -36,6 +39,7 @@ Diacritic folding: `normalize("NFD")` and remove combining marks (`\p{M}`). Use 
 Add a short doc comment at the top of the file saying it is pure and why (it's unit-tested under `node --test`).
 
 ## Checks that must pass
+
 - `npm run test:unit`
 - `npm run build`
 - `npm run lint:check` (run `npm run lint:fix` first if needed)

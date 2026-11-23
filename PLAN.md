@@ -24,11 +24,11 @@ So the plugin attaches one capture-phase `keydown` listener to the items tree. Z
 
 These are separate plugins. zotQL doesn't depend on them or integrate with them. They're listed only to make sure the keys don't clash.
 
-| Plugin | Keys | Conflict? |
-|---|---|---|
-| zotquicksearch (yours) | ⌘⇧F, global | No |
-| Zotero Spotlight | capture-phase window `keydown`, configurable; guide is `mod-j` | Probably none. Check its resolved defaults in M1 |
-| Better BibTeX | none relevant | No. If its Citation Key column is shown, phase 2 matches it like any other column |
+| Plugin                 | Keys                                                           | Conflict?                                                                         |
+| ---------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| zotquicksearch (yours) | ⌘⇧F, global                                                    | No                                                                                |
+| Zotero Spotlight       | capture-phase window `keydown`, configurable; guide is `mod-j` | Probably none. Check its resolved defaults in M1                                  |
+| Better BibTeX          | none relevant                                                  | No. If its Citation Key column is shown, phase 2 matches it like any other column |
 
 No attachment Quick Look plugin (zotLook, etc.) is installed, so nothing else takes Space.
 
@@ -70,18 +70,18 @@ Keeping the key handling (`keyState.ts`) and matching (`matcher.ts`) as pure fun
 
 The listener is attached in capture phase to the main window's items tree (`#zotero-items-tree` or the tree's `.virtualized-table`). It acts only when `document.activeElement` is inside the items tree. The search bar, item pane, notes, reader tabs and collection tree are left alone.
 
-| Key | Card closed, not typing | Card open | Type-to-select active (phase 2) |
-|---|---|---|---|
-| Space | open card | close card | add a space to the typed text |
-| ⌘Y | open card | close card | end typing, open card |
-| ⌥Space | open card | close card | end typing, open card (force) |
-| Esc | pass through | close card | end typing |
-| ↑ / ↓ | pass through | pass through, card follows | end typing, pass through |
-| Return | pass through (opens item) | pass through | end typing, open card |
-| ⌘↓ | pass through | open the first attachment (PDF first) in the reader, close the card | — |
-| ⌘G / ⇧⌘G | — | — | next / previous match |
-| letters, digits | built-in (phase 1) / ours (phase 2) | same, card follows | add to the typed text |
-| + − ← → | pass through | pass through | end typing, pass through |
+| Key             | Card closed, not typing             | Card open                                                           | Type-to-select active (phase 2) |
+| --------------- | ----------------------------------- | ------------------------------------------------------------------- | ------------------------------- |
+| Space           | open card                           | close card                                                          | add a space to the typed text   |
+| ⌘Y              | open card                           | close card                                                          | end typing, open card           |
+| ⌥Space          | open card                           | close card                                                          | end typing, open card (force)   |
+| Esc             | pass through                        | close card                                                          | end typing                      |
+| ↑ / ↓           | pass through                        | pass through, card follows                                          | end typing, pass through        |
+| Return          | pass through (opens item)           | pass through                                                        | end typing, open card           |
+| ⌘↓              | pass through                        | open the first attachment (PDF first) in the reader, close the card | —                               |
+| ⌘G / ⇧⌘G        | —                                   | —                                                                   | next / previous match           |
+| letters, digits | built-in (phase 1) / ours (phase 2) | same, card follows                                                  | add to the typed text           |
+| + − ← →         | pass through                        | pass through                                                        | end typing, pass through        |
 
 ⌥Space: check both `e.code === "Space"` and `e.altKey`, because on macOS `e.key` comes through as a non-breaking space (`" "`).
 
@@ -93,7 +93,7 @@ The listener is attached in capture phase to the main window's items tree (`#zot
 - **Content, top to bottom:**
   - Title (large).
   - Authors as `Last, F.`, with “et al.” after about 8 (expandable).
-  - *Journal* · Year · Vol(Issue) · pages, then DOI and URL as links.
+  - _Journal_ · Year · Vol(Issue) · pages, then DOI and URL as links.
   - The abstract in a serif face (Charter or Iowan Old Style), about 16 px with a 1.5 line height and 65–70 characters per line.
   - **Attachment row:** one clickable icon per attachment, with PDFs first, and a type-specific icon for PDF, EPUB, HTML snapshot or link. Clicking one opens it in Zotero's reader (or the default handler) and closes the card. ⌘↓ opens the first one. An item with a PDF therefore shows a PDF icon, which is the “has PDF” indicator. No icons means no attachments.
   - **Child notes:** the first line of each child note, with HTML stripped, up to three notes, then “+N more”.
@@ -130,12 +130,14 @@ Phase 2 type-to-select on/off (fall back to the built-in one), which columns to 
 ## Milestones
 
 **M0 — scaffold and dev loop (about 1 session)**
+
 - Copy the zotquicksearch tooling into this repo, rename the IDs and `npm install`.
 - Create a separate **dev profile** (`/Applications/Zotero.app/Contents/MacOS/zotero -P`, profile “zotql-dev”), pointed at a copy of your data directory or a small test library so development never touches your real library. Put the paths in `.env`, which is git-ignored.
 - Get `npm start` hot reload working: scaffold serves the build into the dev profile and reloads on save.
 - First commit on `main` (the repo has no commits yet and is on `master`; rename the branch).
 
 **M1 — spike: confirm the four assumptions before building UI**
+
 1. A capture-phase listener on the items tree sees Space before the React handler, and `preventDefault` plus `stopPropagation` stop the built-in selection toggle.
 2. The right selection-changed hook in Zotero 10.
 3. An absolutely positioned overlay in the main window sits above the items and item panes, doesn't take focus, and is ignored by OmniWM.
@@ -144,24 +146,28 @@ Phase 2 type-to-select on/off (fall back to the built-in one), which columns to 
 The result is a throwaway “Space logs the focused item title” build. Record what you find in `NOTES.md`.
 
 **M2 — Quick Look MVP**
+
 - `keyState` handles Space, ⌘Y, ⌥Space and Esc, with unit tests.
 - `itemCard` builds the view model, with unit tests on fixture items (journal article, book, thesis, preprint, item with no abstract, 40-author paper).
 - `quickLook` adds the overlay, card layout and CSS, and closes on Space, Esc or a click outside.
 - **Done when:** Space opens a readable card on any regular item, Space closes it, focus never leaves the list, and the existing Space selection toggle no longer fires.
 
 **M3 — make it feel like Quick Look**
+
 - The card follows ↑/↓, fades in and out, and closes when the collection or tab changes or the window loses focus.
 - Attachment icons (click and ⌘↓), the child-note first lines, and attachment and note rows all behave as described above. The abstract scrolls with PgUp/PgDn and ⇧Space.
 - Tune the typography (dark mode, long titles, missing fields, abstracts that are actually HTML).
 - **Done when:** you can browse a collection with ↓ and read each abstract without touching the mouse.
 
 **M4 — type-to-select on any field**
+
 - `matcher` and its tests: tokenising, prefix matching, wrap-around, next and previous.
 - `typeSelect`: indicator, timer and index cache. Add the type-to-select rows of the key table to `keyState`, with tests covering timer edges such as Space at 1.49 s and 1.51 s.
 - Profile the index build on your largest collection.
 - **Done when:** in a date-sorted collection, typing “kuo 2010” jumps to the right paper, ⌘G cycles through matches, and Space works as both a text space and Quick Look, as the table describes.
 
 **M5 — settings, packaging, release**
+
 - Settings pane and Fluent strings. A README with a GIF.
 - Public GitHub repo (`artkuo/zotQL`) under AGPL-3.0, with a LICENSE file. Set up the template's GitHub Actions release workflow so `npm run release` builds the `.xpi` and `update.json`, and tagged releases publish them.
 - Install it into your real profile from the release `.xpi`.

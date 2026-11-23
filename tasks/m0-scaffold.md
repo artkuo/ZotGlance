@@ -3,6 +3,7 @@
 Set up this repo as a Zotero plugin by copying tooling from `../zotquicksearch` (read only — never modify it). See PLAN.md "Architecture" and "M0".
 
 ## Do
+
 1. Copy from `../zotquicksearch`: `package.json`, `package-lock.json` (if present), `tsconfig.json`, `zotero-plugin.config.ts`, `eslint.config.mjs` (or whatever lint config it has), `.prettierignore` (if present), `.env.example`, `typings/`, `src/index.ts`, `src/addon.ts`, `src/hooks.ts`, `src/utils/`, `addon/bootstrap.js`, `addon/manifest.json`, `addon/prefs.js`, `addon/locale/`, `addon/content/icons/`, and `.github/` workflows if present.
    Do **not** copy `src/modules/quickSearch.ts`, `addon/content/quickSearch.xhtml`, the README, or anything else specific to quick search.
 2. Rename everything to zotQL. In `package.json`:
@@ -16,10 +17,12 @@ Set up this repo as a Zotero plugin by copying tooling from `../zotquicksearch` 
 6. `npm install`.
 
 ## Checks that must pass
+
 - `npm run build`
 - `npm run test:unit`
 - `grep -ri zotquicksearch --exclude-dir=node_modules --exclude-dir=.scaffold --exclude-dir=.git . ` finds only mentions in PLAN.md, AGENTS.md and tasks/.
 
 ## Don't
+
 - Don't create `.env`, Zotero profiles, or touch anything outside this worktree except reading `../zotquicksearch`.
 - Don't implement any zotQL features.

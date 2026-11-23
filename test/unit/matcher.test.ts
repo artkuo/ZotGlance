@@ -22,10 +22,14 @@ test("tokenize: folds diacritics", () => {
 test("wordsFrom: splits display text on whitespace and punctuation", () => {
   assert.deepEqual(wordsFrom("Kuo, A. D."), ["kuo", "a", "d"]);
   assert.deepEqual(wordsFrom("2010-05-01"), ["2010", "05", "01"]);
-  assert.deepEqual(
-    wordsFrom("Energetics of walking: a (simple) model"),
-    ["energetics", "of", "walking", "a", "simple", "model"],
-  );
+  assert.deepEqual(wordsFrom("Energetics of walking: a (simple) model"), [
+    "energetics",
+    "of",
+    "walking",
+    "a",
+    "simple",
+    "model",
+  ]);
 });
 
 test("wordsFrom: folds diacritics and keeps non-Latin letters", () => {
