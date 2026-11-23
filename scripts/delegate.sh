@@ -44,7 +44,10 @@ then print your summary (files changed, decisions, anything unresolved)."
 perm=${DELEGATE_PERMISSION:-accept-edits}
 # -p withholds write/shell tools unless --tools-all; the permission mode still
 # governs what they may do.
-args=(-p "$prompt" --permission-mode "$perm" --tools-all --skip-onboarding --max-turns "${DELEGATE_MAX_TURNS:-80}"
+# In -p mode only the literal --yolo flag unlocks shell/write; --permission-mode
+# yolo is not honoured there.
+if [[ $perm == yolo ]]; then permflag=(--yolo); else permflag=(--permission-mode "$perm"); fi
+args=(-p "$prompt" "${permflag[@]}" --tools-all --skip-onboarding --max-turns "${DELEGATE_MAX_TURNS:-80}"
       --add-dir "$(dirname "$repo")/zotquicksearch")
 [[ -n $model ]] && args+=(-m "$model")
 
