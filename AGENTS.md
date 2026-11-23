@@ -21,6 +21,7 @@ zotero-plugin-template layout: TypeScript, esbuild via zotero-plugin-scaffold, z
 
 - Pure modules (`src/modules/matcher.ts`, `keyState.ts`, `itemCard.ts`'s mapping logic) must not import Zotero, toolkit or DOM globals, so they run under `node --test`. Use relative imports with the `.ts` extension in tests.
 - Don't edit files in `test/unit/` that you were given as a contract. If you believe a contract test is wrong, stop and say so in your summary instead.
+- Do only what your task asks. If a check fails because of a contract test for a *different* task (e.g. `matcher.test.ts` during scaffolding), report it in your summary instead of implementing that other task.
 - Keep dependencies minimal; ask (in the summary) before adding any runtime dependency.
 - Prettier style: 2 spaces, LF, print width 80.
 - Never commit `.env`, profiles, or anything from the user's Zotero data directory.
