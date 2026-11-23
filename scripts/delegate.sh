@@ -37,7 +37,12 @@ $(cat "$spec")
 Work only inside $wt. When done, make sure the checks listed in the task pass,
 then print your summary (files changed, decisions, anything unresolved)."
 
-args=(-p "$prompt" --yolo --skip-onboarding --max-turns "${DELEGATE_MAX_TURNS:-80}"
+# Permission mode for the headless agent. Default "accept-edits" lets it edit
+# files but not run shell commands freely. Set DELEGATE_PERMISSION=yolo to let it
+# run anything (npm install, builds) without prompts: your call, it's confined
+# to the worktree only by convention.
+perm=${DELEGATE_PERMISSION:-accept-edits}
+args=(-p "$prompt" --permission-mode "$perm" --skip-onboarding --max-turns "${DELEGATE_MAX_TURNS:-80}"
       --add-dir "$(dirname "$repo")/zotquicksearch")
 [[ -n $model ]] && args+=(-m "$model")
 
