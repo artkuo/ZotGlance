@@ -39,6 +39,18 @@ export default defineConfig({
     ],
   },
 
+  // `npm start` writes these prefs into the DEV profile only.
+  server: {
+    prefs: {
+      // Keep the dev instance's HTTP server off the real Zotero's port 23119.
+      "extensions.zotero.httpServer.port": Number(
+        process.env.ZOTQL_DEV_PORT || 23129,
+      ),
+      // Enables the dev-only eval bridge (src/modules/devBridge.ts).
+      "extensions.zotero.zotql.devToken": process.env.ZOTQL_DEV_TOKEN || "",
+    },
+  },
+
   test: {
     waitForPlugin: `() => Zotero.${pkg.config.addonInstance}.data.initialized`,
   },

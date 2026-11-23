@@ -4,6 +4,9 @@ import zotero from "@zotero-plugin/eslint-config";
 
 export default zotero({
   overrides: [
+    // Snippets run inside Zotero via scripts/zq-eval.sh: async function
+    // bodies with injected globals, not modules.
+    { ignores: ["scripts/dev/**"] },
     {
       files: ["**/*.ts"],
       rules: {

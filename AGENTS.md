@@ -15,13 +15,15 @@ zotero-plugin-template layout: TypeScript, esbuild via zotero-plugin-scaffold, z
 - `npm run build`: bundle + `tsc --noEmit`. Must pass.
 - `npm run test:unit`: pure-logic tests in `test/unit/*.test.ts`, run by Node's built-in test runner (`node --test`, Node 24 strips TS types). No Zotero needed.
 - `npm run lint:check`: prettier + eslint.
-- `npm start`: hot-reload into the dev profile (needs `.env`; humans/Claude only).
+- `npm start`: hot-reload into the dev profile (needs `.env`; humans/Claude only). It never touches the real Zotero library.
+- `scripts/zq-eval.sh '<js>'`: run JS in the running dev Zotero and get JSON back (humans/Claude only). `scripts/dev/seed.js` seeds the test library and `scripts/dev/keyhelpers.js` sends trusted key events. See NOTES.md.
+- NOTES.md records how Zotero 10 actually behaves (DOM ids, APIs, gotchas). Read it before touching Zotero internals.
 
 ## Rules
 
 - Pure modules (`src/modules/matcher.ts`, `keyState.ts`, `itemCard.ts`'s mapping logic) must not import Zotero, toolkit or DOM globals, so they run under `node --test`. Use relative imports with the `.ts` extension in tests.
 - Don't edit files in `test/unit/` that you were given as a contract. If you believe a contract test is wrong, stop and say so in your summary instead.
-- Do only what your task asks. If a check fails because of a contract test for a *different* task (e.g. `matcher.test.ts` during scaffolding), report it in your summary instead of implementing that other task.
+- Do only what your task asks. If a check fails because of a contract test for a _different_ task (e.g. `matcher.test.ts` during scaffolding), report it in your summary instead of implementing that other task.
 - Keep dependencies minimal; ask (in the summary) before adding any runtime dependency.
 - Prettier style: 2 spaces, LF, print width 80.
 - Never commit `.env`, profiles, or anything from the user's Zotero data directory.

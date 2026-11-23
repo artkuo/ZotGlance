@@ -1,4 +1,5 @@
 import { createZToolkit } from "./utils/ztoolkit";
+import { registerDevBridge, unregisterDevBridge } from "./modules/devBridge";
 
 async function onStartup() {
   await Promise.all([
@@ -10,6 +11,9 @@ async function onStartup() {
   await Promise.all(
     Zotero.getMainWindows().map((win) => onMainWindowLoad(win)),
   );
+
+  // Dev-only (no-op in production builds); user approved 2026-11-23.
+  registerDevBridge();
 
   addon.data.initialized = true;
 }
@@ -25,6 +29,7 @@ async function onMainWindowUnload(_win: Window): Promise<void> {
 }
 
 function onShutdown(): void {
+  unregisterDevBridge();
   ztoolkit.unregisterAll();
   addon.data.alive = false;
   // @ts-expect-error - Plugin instance is not typed
