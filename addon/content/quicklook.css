@@ -32,6 +32,15 @@
   display: none;
 }
 
+/* Reduce motion (macOS accessibility setting): keep the short fade, which
+   macOS also keeps, but drop the zoom. */
+@media (prefers-reduced-motion: reduce) {
+  #zotql-card {
+    transform: none;
+    transition: opacity 120ms ease-out;
+  }
+}
+
 #zotql-card .zotql-body {
   overflow-y: auto;
   padding: 20px 26px 14px;

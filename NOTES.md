@@ -113,3 +113,25 @@ Built with `keyState.ts` and `itemCard.ts` (both delegated to Command Code again
 - If the highlighted note row is the 4th note or later, it falls behind "+N more", so it doesn't appear on the card. Show the highlighted note even when it's past `MAX_NOTES`.
 - The card covers most of the items list at the default 1000×600 window size. Check the size at larger windows, and in the stacked layout.
 - The fade and the real ⌥Space key (`" "`) still need checking by hand, in a visible window.
+
+## M3 results (2026-11-23)
+
+**Done and checked in the dev instance**
+
+- **Keyboard browsing:** with the card open, ↓/↑ moves the selection and the card follows every row. Tested with a real keyboard path; the window was visible this time.
+- **Scrolling:** PgDn, ⇧Space and PgUp page the abstract, and a new item starts at the top.
+- **Focus rule** (decided for PLAN.md "Risks"): the card closes when keyboard focus moves anywhere except the items list or the card (Tab into the item pane, the search bar), and when the selection disappears.
+  - Clicking the card keeps focus in the list.
+  - Deleting the shown item: Zotero selects the next row and the card follows it.
+  - Gotcha: in a background window, Firefox moves focus without firing focus events until the window is active. Test the handler by dispatching `focusin` directly.
+- **Highlighted note:** if it's past the first three, it replaces the last slot. Delegated against contract tests.
+- **Note order:** the card follows `getNotes()`, which is alphabetical by title. That's the same order the items tree shows child notes, so it was left as is.
+- **Layout and appearance:**
+  - Stacked layout: the card centres over the list plus the item pane.
+  - Dark mode works through Zotero's theme variables; tested with `ui.systemUsesDarkTheme = 1`.
+  - Long titles wrap, and HTML abstracts render as plain text.
+- **Abstract typography:** `1rem` (the list's size; follows Zotero's font-size setting) at 1.4 line height. A 300-word abstract fits without scrolling at 1705×1083 (`scripts/dev/abstract300.js`).
+- **Reduce motion:** this Mac has it on. Under it, the card keeps a 120ms fade and drops the zoom.
+- **Stylesheet:** the link has a `?timestamp` query, because Zotero's chrome cache otherwise serves the old CSS after a hot reload.
+
+**Still to check by hand:** a physical ⌥Space keypress (`e.key` is `" "`; the code matches on `e.code`), and how the fade feels in real use.

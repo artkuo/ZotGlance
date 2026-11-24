@@ -55,3 +55,15 @@ Work done in a forked side session after PLAN.md was finalised. Everything below
    - Write `typeSelect.ts` (Claude): the indicator, the index cache over shown columns using `_getColumns()` and `getCellText`, with every creator surname for the Creator column.
    - Wire the `typed`, `endTyping` and `findNext` effects in `keyController`, and turn the `typeSelect` pref on by default.
    - The indicator's CSS could be delegated.
+
+## Update 2026-11-23 (evening): M3 done
+
+See NOTES.md "M3 results". The delegated highlighted-note change merged cleanly (60/60 tests). That worktree's `npm install` didn't run, so `delegate.sh` reported a build failure. That only reflects the worktree; the build passes on main.
+
+### Next steps now
+
+1. **You, by hand:** a physical ⌥Space keypress, and how the fade feels in your real Zotero. Install a dev build, or run `npm start` and use the dev window.
+2. **M4, type-to-select:**
+   - Delegate tier 2 of the matcher: write its contract tests and `tasks/matcher-tiers.md`.
+   - Claude writes `typeSelect.ts`: the indicator, and the index over shown columns using `_getColumns()` and `getCellText`, with every creator surname.
+   - Wire the `typed`, `endTyping` and `findNext` effects in `keyController`, then turn the `typeSelect` pref on.

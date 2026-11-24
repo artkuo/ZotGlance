@@ -73,6 +73,18 @@ export class QuickLook {
   private readonly onWindowBlur = (e: Event) => {
     if (e.target === this.win) this.close();
   };
+  /**
+   * Keyboard focus moving anywhere but the items list or the card (Tab into
+   * the item pane, ⌘F to the search bar, ...) closes the card: otherwise it
+   * would stay up while Esc and Space no longer reach it.
+   */
+  private readonly onFocusIn = (e: FocusEvent) => {
+    const target = e.target as Element;
+    if (!(target instanceof this.win.Element)) return;
+    if (this.root?.contains(target)) return;
+    if (target.closest?.("#zotero-items-tree")) return;
+    this.close();
+  };
   private readonly onResize = () => this.place();
 
   /** Called whenever the card closes for a reason other than a key. */
@@ -159,6 +171,7 @@ export class QuickLook {
     zp.collectionsView?.onSelect?.addListener(this.onCollectionSelect);
     this.win.addEventListener("mousedown", this.onWindowMouseDown, true);
     this.win.addEventListener("blur", this.onWindowBlur);
+    this.win.addEventListener("focusin", this.onFocusIn, true);
     this.win.addEventListener("resize", this.onResize);
     this.notifierID = Zotero.Notifier.registerObserver(
       {
@@ -179,6 +192,7 @@ export class QuickLook {
     zp.collectionsView?.onSelect?.removeListener(this.onCollectionSelect);
     this.win.removeEventListener("mousedown", this.onWindowMouseDown, true);
     this.win.removeEventListener("blur", this.onWindowBlur);
+    this.win.removeEventListener("focusin", this.onFocusIn, true);
     this.win.removeEventListener("resize", this.onResize);
     if (this.notifierID) Zotero.Notifier.unregisterObserver(this.notifierID);
     this.notifierID = null;
@@ -197,7 +211,9 @@ export class QuickLook {
         return;
       }
       const item = this.currentItem();
+      // Selection gone (item deleted, list emptied): nothing to show.
       if (item) this.render(item);
+      else this.close();
     }, 0);
   }
 
