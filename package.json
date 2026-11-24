@@ -1,7 +1,7 @@
 {
   "name": "zotglance",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Quick Look card and better type-to-select for the Zotero items list",
   "config": {
     "addonName": "ZotGlance",
