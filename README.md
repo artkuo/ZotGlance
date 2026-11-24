@@ -98,7 +98,11 @@ npm run test:unit  # pure logic, no Zotero needed
 npm run lint:check
 ```
 
-`npm start` runs a separate development copy of Zotero with hot reload. Copy `.env.example` to `.env` and point it at a **separate** profile and data directory, never your real library. `NOTES.md` records how Zotero 10's internals behave, and `PLAN.md` is the design.
+`npm start` runs a separate development copy of Zotero with hot reload. Copy `.env.example` to `.env` and point it at a **separate** profile and data directory, never your real library. `NOTES.md` records how Zotero 10's internals behave.
+
+## Authors
+
+Art Kuo, with Command Code, which wrote much of the tested core logic.
 
 ## License
 

@@ -15,6 +15,9 @@
     "url": "git+https://github.com/artkuo/ZotGlance.git"
   },
   "author": "Art Kuo",
+  "contributors": [
+    "Command Code"
+  ],
   "bugs": {
     "url": "https://github.com/artkuo/ZotGlance/issues"
   },

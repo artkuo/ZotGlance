@@ -1,6 +1,6 @@
 # ZotGlance — implementation notes
 
-Findings from running code against Zotero 10.0.9 in the dev profile. PLAN.md is the design; this file records what the real app does.
+Findings from running code against Zotero 10.0.9 in the dev profile: what the real app does.
 
 ## Dev setup (M0)
 
