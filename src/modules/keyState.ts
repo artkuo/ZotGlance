@@ -28,6 +28,7 @@ export interface KeyContext {
 
 export interface KeyState {
   cardOpen: boolean;
+  helpOpen: boolean;
   typed: string; // current typed text ("" when not typing)
   typedAt: number; // time of the last typed key, ms
   lastQuery: string; // last non-empty typed text, kept after typing ends (for ⌘G)
@@ -36,6 +37,8 @@ export interface KeyState {
 export type Effect =
   | { type: "openCard" }
   | { type: "closeCard" }
+  | { type: "openHelp" }
+  | { type: "closeHelp" }
   | { type: "typed"; text: string } // typed text changed: show indicator, jump to first match from the focused row (inclusive)
   | { type: "endTyping" } // hide indicator
   | { type: "findNext"; text: string; direction: 1 | -1 } // jump to next/prev match (exclusive of focused row)
@@ -56,6 +59,7 @@ export const DEFAULT_OPTIONS: KeyOptions = {
 
 export const INITIAL_STATE: KeyState = {
   cardOpen: false,
+  helpOpen: false,
   typed: "",
   typedAt: 0,
   lastQuery: "",
@@ -95,6 +99,18 @@ function toggleCard(state: KeyState, effects: Effect[]): KeyState {
   return state.cardOpen ? closeCard(state, effects) : openCard(state, effects);
 }
 
+function openHelp(state: KeyState, effects: Effect[]): KeyState {
+  if (state.helpOpen) return state;
+  effects.push({ type: "openHelp" });
+  return { ...state, helpOpen: true };
+}
+
+function closeHelp(state: KeyState, effects: Effect[]): KeyState {
+  if (!state.helpOpen) return state;
+  effects.push({ type: "closeHelp" });
+  return { ...state, helpOpen: false };
+}
+
 function endTyping(
   state: KeyState,
   active: boolean,
@@ -106,6 +122,13 @@ function endTyping(
   return next;
 }
 
+function clearStaleTyped(state: KeyState): KeyState {
+  if (state.typed === "") return state;
+  return { ...state, typed: "", typedAt: 0 };
+}
+
+const PRINTABLE_LETTER_OR_DIGIT = /[\p{L}\p{N}]/u;
+
 export function reduceKey(
   state: KeyState,
   input: KeyInput,
@@ -116,23 +139,34 @@ export function reduceKey(
   const active = isTyping(state, now, options);
   const effects: Effect[] = [];
   let next: KeyState = state;
-  const handled = false;
 
   const isSpace = input.code === "Space";
+  const isQuestion = input.key === "?";
 
   // 1. Modifier-only keys.
   if (MODIFIER_KEYS.has(input.key)) {
     return { state, handled: false, effects: [] };
   }
 
-  // 2. ⌥Space: end typing, then toggle the card.
+  // 2. While help is open: ?, Esc, Space (any ⌥/⇧) close help and do nothing
+  // else. Any other key closes help, then is handled as if help had been closed.
+  if (next.helpOpen) {
+    if (isQuestion || input.key === "Escape" || isSpace) {
+      next = closeHelp(next, effects);
+      return { state: next, handled: true, effects };
+    }
+    next = closeHelp(next, effects);
+    // fall through with help closed; its effects precede the key's effects
+  }
+
+  // 3. ⌥Space: end typing, then toggle the card.
   if (isSpace && input.altKey) {
     next = endTyping(next, active, effects);
     next = toggleCard(next, effects);
     return { state: next, handled: true, effects };
   }
 
-  // 3. ⇧Space: if typing it's a text space (rule 4). Otherwise if card open,
+  // 4. ⇧Space: if typing it's a text space (rule 5). Otherwise if card open,
   // scroll the card. Otherwise not handled.
   if (
     isSpace &&
@@ -145,14 +179,14 @@ export function reduceKey(
       effects.push({ type: "scrollCard", direction: 1 });
       return { state: next, handled: true, effects };
     }
-    // fall through to rule 4 when typing, or rule 13 when card closed
+    // fall through to rule 5 when typing, or rule 14 when card closed
     if (!active) {
       next = endTyping(next, active, effects);
       return { state: next, handled: false, effects };
     }
   }
 
-  // 4. Space (no alt/meta/ctrl).
+  // 5. Space (no alt/meta/ctrl).
   if (isSpace && !input.altKey && !input.metaKey && !input.ctrlKey) {
     if (options.typeSelect && active) {
       const text = next.typed + " ";
@@ -161,14 +195,14 @@ export function reduceKey(
       return { state: next, handled: true, effects };
     }
     if (!options.typeSelect && context?.builtinTyping) {
-      return { state: next, handled: false, effects: [] };
+      return { state: next, handled: false, effects };
     }
     next = endTyping(next, active, effects);
     next = toggleCard(next, effects);
     return { state: next, handled: true, effects };
   }
 
-  // 5. ⌘Y.
+  // 6. ⌘Y.
   if (
     input.metaKey &&
     input.key.toLowerCase() === "y" &&
@@ -176,14 +210,14 @@ export function reduceKey(
     !input.altKey
   ) {
     if (!options.cmdY) {
-      return { state, handled: false, effects: [] };
+      return { state: next, handled: false, effects };
     }
     next = endTyping(next, active, effects);
     next = toggleCard(next, effects);
     return { state: next, handled: true, effects };
   }
 
-  // 6. ⌘G / ⇧⌘G.
+  // 7. ⌘G / ⇧⌘G.
   if (input.metaKey && input.key.toLowerCase() === "g") {
     if (options.typeSelect && next.lastQuery !== "") {
       const text = next.lastQuery;
@@ -195,10 +229,10 @@ export function reduceKey(
       });
       return { state: next, handled: true, effects };
     }
-    return { state, handled: false, effects: [] };
+    return { state: next, handled: false, effects };
   }
 
-  // 7. ⌘↓ when card open.
+  // 8. ⌘↓ when card open.
   if (input.metaKey && input.key === "ArrowDown") {
     if (next.cardOpen) {
       next = endTyping(next, active, effects);
@@ -206,10 +240,10 @@ export function reduceKey(
       next = closeCard(next, effects);
       return { state: next, handled: true, effects };
     }
-    return { state, handled: false, effects: [] };
+    return { state: next, handled: false, effects };
   }
 
-  // 8. Escape.
+  // 9. Escape.
   if (input.key === "Escape") {
     if (active) {
       next = endTyping(next, true, effects);
@@ -219,10 +253,10 @@ export function reduceKey(
       next = closeCard(next, effects);
       return { state: next, handled: true, effects };
     }
-    return { state, handled: false, effects: [] };
+    return { state: next, handled: false, effects };
   }
 
-  // 9. Enter.
+  // 10. Enter.
   if (input.key === "Enter") {
     if (active) {
       next = endTyping(next, true, effects);
@@ -231,10 +265,10 @@ export function reduceKey(
       }
       return { state: next, handled: true, effects };
     }
-    return { state, handled: false, effects: [] };
+    return { state: next, handled: false, effects };
   }
 
-  // 10. PageDown / PageUp while card open.
+  // 11. PageDown / PageUp while card open.
   if (next.cardOpen && (input.key === "PageDown" || input.key === "PageUp")) {
     effects.push({
       type: "scrollCard",
@@ -243,7 +277,7 @@ export function reduceKey(
     return { state: next, handled: true, effects };
   }
 
-  // 11. Backspace while typing.
+  // 12. Backspace while typing.
   if (input.key === "Backspace" && active) {
     const text = next.typed.slice(0, -1);
     if (text.length > 0) {
@@ -255,21 +289,55 @@ export function reduceKey(
     return { state: next, handled: true, effects };
   }
 
-  // 12. Printable character when typeSelect.
+  // 13. Printable character (length === 1, no ⌘/⌃/⌥).
   if (
-    options.typeSelect &&
     input.key.length === 1 &&
     !input.metaKey &&
     !input.ctrlKey &&
     !input.altKey
   ) {
-    const text = active ? next.typed + input.key : input.key;
-    next = { ...next, typed: text, typedAt: now, lastQuery: text };
-    effects.push({ type: "typed", text });
-    return { state: next, handled: true, effects };
+    if (options.typeSelect) {
+      if (active) {
+        const text = next.typed + input.key;
+        next = { ...next, typed: text, typedAt: now, lastQuery: text };
+        effects.push({ type: "typed", text });
+        return { state: next, handled: true, effects };
+      }
+
+      // Not typing: ? opens help, +/- pass to Zotero, other punctuation is
+      // swallowed, letters/digits start typing.
+      if (isQuestion) {
+        next = clearStaleTyped(next);
+        if (next.cardOpen) next = closeCard(next, effects);
+        next = openHelp(next, effects);
+        return { state: next, handled: true, effects };
+      }
+      if (PRINTABLE_LETTER_OR_DIGIT.test(input.key)) {
+        const text = input.key;
+        next = { ...next, typed: text, typedAt: now, lastQuery: text };
+        effects.push({ type: "typed", text });
+        return { state: next, handled: true, effects };
+      }
+      if (input.key === "+" || input.key === "-") {
+        next = clearStaleTyped(next);
+        return { state: next, handled: false, effects };
+      }
+      next = clearStaleTyped(next);
+      return { state: next, handled: true, effects };
+    }
+
+    // typeSelect off: only ? opens help (unless Zotero's own typing is mid-word).
+    if (isQuestion) {
+      if (context?.builtinTyping) {
+        return { state: next, handled: false, effects };
+      }
+      if (next.cardOpen) next = closeCard(next, effects);
+      next = openHelp(next, effects);
+      return { state: next, handled: true, effects };
+    }
   }
 
-  // 13. Anything else: end typing if typing. Not handled.
+  // 14. Anything else: end typing if typing. Not handled.
   if (active) {
     next = endTyping(next, true, effects);
   } else if (next.typed !== "") {

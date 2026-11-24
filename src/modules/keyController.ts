@@ -125,6 +125,10 @@ export class KeyController {
           options.timeoutMs,
         );
         break;
+      case "openHelp":
+      case "closeHelp":
+        // help card: orchestrator
+        break;
     }
   }
 }
