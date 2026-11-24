@@ -29,21 +29,16 @@
     "lint:check": "prettier --check . && eslint .",
     "lint:fix": "prettier --write . && eslint . --fix",
     "release": "zotero-plugin release",
-    "test": "zotero-plugin test",
     "update-deps": "npm update --save",
     "test:unit": "node --test test/unit/*.test.ts"
   },
   "dependencies": {
-    "zotero-plugin-toolkit": "^5.1.0-beta.13"
+    "zotero-plugin-toolkit": "^6.0.0"
   },
   "devDependencies": {
-    "@types/chai": "^5.2.3",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "^24.10.0",
+    "@types/node": "^26.6.6",
     "@zotero-plugin/eslint-config": "^0.6.10",
-    "chai": "^6.3.0",
     "eslint": "^9.39.2",
-    "mocha": "^11.7.5",
     "prettier": "^3.10.1",
     "typescript": "^5.9.3",
     "zotero-plugin-scaffold": "^0.9.4",
