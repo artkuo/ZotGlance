@@ -1,4 +1,4 @@
-pref-card-title = Quick Look card
+pref-card-title = At a Glance card
 pref-abstract-font = Abstract font:
 pref-abstract-size = Abstract size:
 pref-size-default =

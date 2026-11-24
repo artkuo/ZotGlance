@@ -1,10 +1,10 @@
 // Seed the DEV library with fixture items. Run with:
 //   scripts/zq-eval.sh < scripts/dev/seed.js
-// Idempotent: does nothing if the "zotQL fixtures" collection exists.
+// Idempotent: does nothing if the "ZotGlance fixtures" collection exists.
 // All content is invented test data.
 
 const LIB = Zotero.Libraries.userLibraryID;
-const COLL = "zotQL fixtures";
+const COLL = "ZotGlance fixtures";
 const existing = Zotero.Collections.getByLibrary(LIB).find(
   (c) => c.name === COLL,
 );
@@ -56,7 +56,7 @@ const ja = await make(
     url: "https://example.org/fixture/2010-001",
     abstractNote: lorem.repeat(6),
   },
-  [au("Kuo", "Arthur D."), au("Donelan", "J. Maxwell"), au("Smith", "Jane")],
+  [au("Smith", "Jane"), au("Okonkwo", "Daniel"), au("Lindqvist", "Maria")],
   {
     notes: [
       "<h1>Key result</h1><p>Uneven terrain costs about 28% more.</p>",
@@ -69,13 +69,13 @@ const ja = await make(
 made.push(ja.id);
 
 // 1b. A small PDF attachment and a link attachment on the journal article.
-const pdfPath = PathUtils.join(PathUtils.tempDir, "zotql-fixture.pdf");
+const pdfPath = PathUtils.join(PathUtils.tempDir, "zotglance-fixture.pdf");
 const pdf =
   "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" +
   "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" +
   "3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R" +
   "/Resources<</Font<</F1 5 0 R>>>>>>endobj\n" +
-  "4 0 obj<</Length 44>>stream\nBT /F1 24 Tf 72 700 Td (zotQL fixture) Tj ET\nendstream endobj\n" +
+  "4 0 obj<</Length 44>>stream\nBT /F1 24 Tf 72 700 Td (ZotGlance fixture) Tj ET\nendstream endobj\n" +
   "5 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj\n" +
   "trailer<</Root 1 0 R>>\n%%EOF\n";
 await IOUtils.writeUTF8(pdfPath, pdf);
@@ -120,7 +120,7 @@ made.push(
         date: "2005",
         abstractNote: lorem.repeat(2),
       },
-      [au("Alexander", "R. McNeill")],
+      [au("Hartmann", "Paul")],
     )
   ).id,
 );
@@ -137,7 +137,7 @@ made.push(
         date: "2018",
         abstractNote: lorem.repeat(3),
       },
-      [au("Osman", "Kim")],
+      [au("Ferreira", "Lucas")],
     )
   ).id,
 );
@@ -155,7 +155,7 @@ made.push(
         DOI: "10.0000/fixture.preprint.1",
         abstractNote: lorem,
       },
-      [au("Seethapathi", "Nidhi"), au("Kuo", "Arthur D.")],
+      [au("Moreau", "Camille"), au("Smith", "Jane")],
     )
   ).id,
 );
@@ -226,10 +226,24 @@ const surnames = [
   "Xu",
   "Young",
   "Zhang",
-  "Kuo",
+  "Jones",
   "Smith",
   "Smithson",
   "Kumar",
+];
+const initials = [
+  "A.",
+  "B. K.",
+  "C.",
+  "D. M.",
+  "E.",
+  "F. R.",
+  "G.",
+  "H. L.",
+  "J.",
+  "K. S.",
+  "L.",
+  "M. T.",
 ];
 const topics = [
   "metabolic cost",
@@ -255,7 +269,13 @@ for (let i = 0; i < surnames.length; i++) {
           date: year,
           abstractNote: i % 3 ? lorem : "",
         },
-        [au(surnames[i], "X."), au(surnames[(i + 5) % surnames.length], "Y.")],
+        [
+          au(surnames[i], initials[i % initials.length]),
+          au(
+            surnames[(i + 5) % surnames.length],
+            initials[(i + 3) % initials.length],
+          ),
+        ],
       )
     ).id,
   );

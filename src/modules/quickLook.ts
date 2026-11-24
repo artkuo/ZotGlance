@@ -327,7 +327,7 @@ export class QuickLook {
     root.id = ROOT_ID;
     root.hidden = true;
     root.setAttribute("role", "dialog");
-    root.setAttribute("aria-label", "Quick Look");
+    root.setAttribute("aria-label", "At a Glance");
     // Keep keyboard focus in the items list when the card is clicked.
     // Except on the resize grip: preventDefault would stop the drag.
     root.addEventListener("mousedown", (e: MouseEvent) => {

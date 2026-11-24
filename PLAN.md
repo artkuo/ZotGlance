@@ -2,8 +2,8 @@
 
 A Zotero plugin that changes how the **items list behaves when it has keyboard focus**. It is not a search tool. It adds no search box or results window and doesn't touch Zotero's search bar. It only changes what keys do while you're in the list:
 
-1. **Quick Look card.** Press Space on the highlighted item to get a floating card centred over the panes. It shows the title, authors, journal, year and DOI, then the abstract in readable type, then clickable attachment icons and the first line of each child note. The card follows ↑/↓ and closes on Space, Esc or a click outside.
-2. **Better type-to-select** (phase 2). This replaces Zotero's built-in “type letters to jump to a row” in the list. Today that only matches the sorted column. The new version jumps to the next row where any matched column (by default the ones currently shown, usually title, creator and year; you can choose others in settings) matches what you typed, whatever the sort. The list itself is not filtered. A small indicator shows what you've typed, and while it's visible Space is a text space.
+1.  **Quick Look card.** Press Space on the highlighted item to get a floating card centred over the panes. It shows the title, authors, journal, year and DOI, then the abstract in readable type, then clickable attachment icons and the first line of each child note. The card follows ↑/↓ and closes on Space, Esc or a click outside.
+2.  **Better type-to-select** (phase 2). This replaces Zotero's built-in “type letters to jump to a row” in the list. Today that only matches the sorted column. The new version jumps to the next row where any matched column (by default the ones currently shown, usually title, creator and year; you can choose others in settings) matches what you typed, whatever the sort. The list itself is not filtered. A small indicator shows what you've typed, and while it's visible Space is a text space.
 
 Target: **Zotero 10.0.9** (installed), macOS first. The plugin will be open source (AGPL-3.0) on GitHub and submitted to Zotero's plugin list. The design follows the claude.ai chat this came from.
 
@@ -81,7 +81,7 @@ The listener is attached in capture phase to the main window's items tree (`#zot
 | ⌘↓              | pass through                        | open the first attachment (PDF first) in the reader, close the card | —                               |
 | ⌘G / ⇧⌘G        | —                                   | —                                                                   | next / previous match           |
 | letters, digits | built-in (phase 1) / ours (phase 2) | same, card follows                                                  | add to the typed text           |
-| + − ← →         | pass through                        | pass through                                                        | end typing, pass through        |
+| \+ − ← →        | pass through                        | pass through                                                        | end typing, pass through        |
 
 ⌥Space: check both `e.code === "Space"` and `e.altKey`, because on macOS `e.key` comes through as a non-breaking space (`" "`).
 
@@ -115,15 +115,21 @@ The listener is attached in capture phase to the main window's items tree (`#zot
 - **Which columns are matched:** by default the columns currently shown in the items list, read from the items tree's visible column list. A setting can replace that with a fixed set of columns.
   - Columns are matched by their **displayed text** (`itemsView.getCellText(i, column)`), split into words. So Year matches “2010” and Citation Key matches if that column is shown.
   - **Creator is the exception.** The column shows “Kuo et al.”, which would hide co-authors, so Creator matches every author's surname from `item.getCreators()`.
+
 - On the first keystroke, build an index of the **visible rows only**: `itemsView.rowCount` and `itemsView.getRow(i).ref`. For each row store a lowercase word list from the matched columns. Cache it per view. Invalidate the cache when the items view refreshes or `Zotero.Notifier` reports item changes. Measure the build time on your largest collection. If it's too slow, index lazily from the focused row.
+
 - **Matching:** split the typed text on spaces. Every token must be a **prefix of some word** in the row, so “kuo 2010” matches both. Move the selection to the next matching row below the focused one, wrapping at the end. Nothing is hidden or filtered.
+
 - **Tiered matching, so a space isn't required where letters meet digits.** Search the whole list with tier 1; fall back to tier 2 only if tier 1 matches no row. Stricter tiers win, so a looser reading never takes the jump from an exact one.
-  1. **As typed:** tokens split on spaces only. “h2o” still matches the title word “H2O”.
-  2. **Letter/digit split:** each token is also split where a letter meets a digit. “jones2006” becomes “jones” + “2006”, matching Jones in Creator and 2006 in Year. “kuo2010walk” becomes “kuo” + “2010” + “walk”.
+  1.  **As typed:** tokens split on spaces only. “h2o” still matches the title word “H2O”.
+  2.  **Letter/digit split:** each token is also split where a letter meets a digit. “jones2006” becomes “jones” + “2006”, matching Jones in Creator and 2006 in Year. “kuo2010walk” becomes “kuo” + “2010” + “walk”.
   - No general “any split” tier (“kuowalk” → “kuo” + “walk”). It was considered and left out because short pieces match almost every row. Revisit only if real use asks for it.
   - ⌘G and ⇧⌘G use the same tier that found the current match, so cycling stays consistent.
+
 - **Indicator:** a small pill at the bottom of the items pane reading `kuo 20▌`, plus a match count if it's cheap to compute. It hides 1.5 s after the last keystroke (a pref), or at once on Esc, Return or an arrow key.
+
 - Stop letters reaching the built-in `_handleTyping`, so the old and new type-to-select never run together. Ideally the plugin calls `stopPropagation()` on every printable key while the items tree has focus.
+
 - **Failure case to accept:** you type “smith”, pause past the timeout, then press Space meaning “smith j”, and the card opens instead. The visible indicator and the longer 1.5 s timeout make this rare, and pressing Space again closes the card.
 
 ### Prefs (phase 3, in a Settings pane)
@@ -143,10 +149,10 @@ Phase 2 type-to-select on/off (fall back to the built-in one), which columns to 
 
 **M1 — spike: confirm the four assumptions before building UI**
 
-1. A capture-phase listener on the items tree sees Space before the React handler, and `preventDefault` plus `stopPropagation` stop the built-in selection toggle.
-2. The right selection-changed hook in Zotero 10.
-3. An absolutely positioned overlay in the main window sits above the items and item panes, doesn't take focus, and is ignored by OmniWM.
-4. Spotlight's resolved default shortcuts use neither Space nor ⌘Y.
+1.  A capture-phase listener on the items tree sees Space before the React handler, and `preventDefault` plus `stopPropagation` stop the built-in selection toggle.
+2.  The right selection-changed hook in Zotero 10.
+3.  An absolutely positioned overlay in the main window sits above the items and item panes, doesn't take focus, and is ignored by OmniWM.
+4.  Spotlight's resolved default shortcuts use neither Space nor ⌘Y.
 
 The result is a throwaway “Space logs the focused item title” build. Record what you find in `NOTES.md`.
 

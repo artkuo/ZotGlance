@@ -98,7 +98,7 @@ export class HelpCard {
     const grid = this.el("div", "zotglance-help-rows");
     root.appendChild(grid);
 
-    this.section(grid, "Quick Look card", [
+    this.section(grid, "At a Glance card", [
       ["Space", "open or close the card"],
       [cmdY ? "⌥Space  ⌘Y" : "⌥Space", "open or close it, even while typing"],
       ["↑  ↓", "move through the list; the card follows"],

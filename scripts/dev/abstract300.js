@@ -1,5 +1,5 @@
 // Adds a journal article with a 300-word abstract (invented text) to the
-// "zotQL fixtures" collection, to check that an average abstract fits the
+// "ZotGlance fixtures" collection, to check that an average abstract fits the
 // card. Run after seed.js: scripts/zq-eval.sh < scripts/dev/abstract300.js
 const sentences = [
   "Walking on uneven terrain is common in daily life, yet most laboratory studies of human gait use smooth, level treadmills.",
@@ -30,7 +30,7 @@ const text = words
   .replace(/[,;:.]*$/, ".");
 const LIB = Zotero.Libraries.userLibraryID;
 const coll = Zotero.Collections.getByLibrary(LIB).find(
-  (c) => c.name === "zotQL fixtures",
+  (c) => c.name === "ZotGlance fixtures",
 );
 let item = (await Zotero.Items.getAll(LIB)).find(
   (it) =>
@@ -53,10 +53,10 @@ if (!item) {
   item.setField("pages", "200-210");
   item.setField("DOI", "10.0000/fixture.2012.300");
   item.setCreators([
-    { lastName: "Voloshina", firstName: "Alexandra S.", creatorType: "author" },
-    { lastName: "Kuo", firstName: "Arthur D.", creatorType: "author" },
-    { lastName: "Daley", firstName: "Monica A.", creatorType: "author" },
-    { lastName: "Ferris", firstName: "Daniel P.", creatorType: "author" },
+    { lastName: "Marchetti", firstName: "Elena R.", creatorType: "author" },
+    { lastName: "Smith", firstName: "Jane", creatorType: "author" },
+    { lastName: "Abara", firstName: "Tunde", creatorType: "author" },
+    { lastName: "Lindqvist", firstName: "Maria", creatorType: "author" },
   ]);
   item.setField("abstractNote", text);
   item.addToCollection(coll.id);

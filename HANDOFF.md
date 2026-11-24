@@ -117,6 +117,6 @@ The user tested M4 in their real Zotero ("works very well") and asked for abstra
 ## Update 2026-11-24: renamed to ZotGlance
 
 - New identity: addonName `ZotGlance`, ID `zotglance@artkuo.dev`, ref `zotglance`, instance `Zotero.ZotGlance`, prefs `extensions.zotero.zotglance.*`, file `zot-glance.xpi`, repo `artkuo/ZotGlance`. CSS ids and classes are `zotglance-*`.
-- Kept on purpose (dev-only or local): the env vars `ZOTQL_DEV_PORT`/`ZOTQL_DEV_TOKEN`, the dev profile `~/Zotero-dev/zotql`, the local checkout folder `zotQL`, `../zotQL-worktrees`, and the "zotQL fixtures" test collection.
+- Kept on purpose (dev-only or local): the env vars `ZOTQL_DEV_PORT`/`ZOTQL_DEV_TOKEN`, the dev profile `~/Zotero-dev/zotql`, the local checkout folder `zotQL` and `../zotQL-worktrees`. The dev test collection is now "ZotGlance fixtures", with invented author names (no real people).
 - `tasks/` and `test/` were not touched; the old task specs are history.
 - The user's real Zotero has the hand-installed zotQL (`zotql@artkuo.dev`). It must be removed before installing ZotGlance, or both take Space.
