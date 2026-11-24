@@ -102,3 +102,14 @@ The user tested M4 in their real Zotero ("works very well") and asked for abstra
 2. Tag `v0.1.0` and push the tag. The release workflow builds and publishes `zot-ql.xpi` and `update.json`.
 3. The user installs the release `.xpi` in their real Zotero.
 4. Submit to Zotero's plugin list (zotero.org/support/plugins): check the current submission instructions first.
+
+## Update 2026-11-24: public on GitHub
+
+- Before publishing: the `?` help card was added, and `+`/`-` now reach Zotero again. See NOTES.md.
+- https://github.com/artkuo/zotQL is public (AGPL-3.0, detected by GitHub). `main` is pushed, and the first CI run passed: lint, unit, build.
+
+### Next steps now
+
+1. **Release (needs the user's OK):** `npm run release` bumps the version, tags and pushes. The tag triggers `release.yml`, which publishes `zot-ql.xpi` and `update.json`. Start at v0.1.0.
+2. The user installs the release `.xpi` in their real Zotero.
+3. Submit to Zotero's plugin list (zotero.org/support/plugins). Check the current instructions first.
