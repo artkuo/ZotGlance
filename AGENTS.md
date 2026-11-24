@@ -1,4 +1,4 @@
-# zotQL — instructions for coding agents
+# ZotGlance — instructions for coding agents
 
 Read by every agent working here (Claude Code via CLAUDE.md, Command Code and others directly).
 

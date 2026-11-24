@@ -8,9 +8,12 @@
   <groupbox>
     <label><html:h2 data-l10n-id="pref-card-title" /></label>
     <hbox align="center">
-      <label data-l10n-id="pref-abstract-font" control="zotql-abstract-font" />
+      <label
+        data-l10n-id="pref-abstract-font"
+        control="zotglance-abstract-font"
+      />
       <menulist
-        id="zotql-abstract-font"
+        id="zotglance-abstract-font"
         preference="abstractFont"
         native="true"
       >
@@ -27,9 +30,12 @@
       </menulist>
     </hbox>
     <hbox align="center">
-      <label data-l10n-id="pref-abstract-size" control="zotql-abstract-size" />
+      <label
+        data-l10n-id="pref-abstract-size"
+        control="zotglance-abstract-size"
+      />
       <menulist
-        id="zotql-abstract-size"
+        id="zotglance-abstract-size"
         preference="abstractSize"
         native="true"
       >
@@ -62,52 +68,52 @@
     />
     <description data-l10n-id="pref-typeselect-help" />
     <label data-l10n-id="pref-columns" />
-    <radiogroup id="zotql-columns" preference="typeSelectColumns">
+    <radiogroup id="zotglance-columns" preference="typeSelectColumns">
       <radio value="shown" data-l10n-id="pref-columns-shown" />
       <radio value="fixed" data-l10n-id="pref-columns-fixed" />
     </radiogroup>
     <vbox style="margin-inline-start: 24px">
       <checkbox
-        class="zotql-col"
+        class="zotglance-col"
         preference="matchTitle"
         data-l10n-id="pref-col-title"
         native="true"
       />
       <checkbox
-        class="zotql-col"
+        class="zotglance-col"
         preference="matchCreator"
         data-l10n-id="pref-col-creator"
         native="true"
       />
       <checkbox
-        class="zotql-col"
+        class="zotglance-col"
         preference="matchYear"
         data-l10n-id="pref-col-year"
         native="true"
       />
       <checkbox
-        class="zotql-col"
+        class="zotglance-col"
         preference="matchPublication"
         data-l10n-id="pref-col-publication"
         native="true"
       />
       <checkbox
-        class="zotql-col"
+        class="zotglance-col"
         preference="matchPublisher"
         data-l10n-id="pref-col-publisher"
         native="true"
       />
       <checkbox
-        class="zotql-col"
+        class="zotglance-col"
         preference="matchCitationKey"
         data-l10n-id="pref-col-citationkey"
         native="true"
       />
     </vbox>
     <hbox align="center">
-      <label data-l10n-id="pref-timeout" control="zotql-timeout" />
+      <label data-l10n-id="pref-timeout" control="zotglance-timeout" />
       <menulist
-        id="zotql-timeout"
+        id="zotglance-timeout"
         preference="typeSelectTimeoutMs"
         native="true"
       >

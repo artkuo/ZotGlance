@@ -1,5 +1,5 @@
 /**
- * The "?" help card: zotQL's keys, in the Quick Look card's style.
+ * The "?" help card: ZotGlance's keys, in the Quick Look card's style.
  *
  * Opened and closed by keyController for the openHelp/closeHelp effects of
  * keyState.ts. It also closes itself on a click, on the window losing
@@ -8,7 +8,7 @@
 import { ensureStylesheet, HTML_NS } from "./quickLook";
 import { getPref } from "../utils/prefs";
 
-const ROOT_ID = "zotql-help";
+const ROOT_ID = "zotglance-help";
 const FADE_MS = 120;
 
 type Row = [keys: string, does: string];
@@ -81,7 +81,7 @@ export class HelpCard {
     root.id = ROOT_ID;
     root.hidden = true;
     root.setAttribute("role", "dialog");
-    root.setAttribute("aria-label", "zotQL keys");
+    root.setAttribute("aria-label", "ZotGlance keys");
     doc.documentElement!.appendChild(root);
     this.root = root;
     return root;
@@ -91,11 +91,11 @@ export class HelpCard {
     const cmdY = getPref("cmdY") !== false;
     const typeSelect = getPref("typeSelect") !== false;
     root.replaceChildren();
-    const title = this.el("h1", "zotql-title");
-    title.textContent = "zotQL keys";
+    const title = this.el("h1", "zotglance-title");
+    title.textContent = "ZotGlance keys";
     root.appendChild(title);
     // One grid for every section, so the key column lines up throughout.
-    const grid = this.el("div", "zotql-help-rows");
+    const grid = this.el("div", "zotglance-help-rows");
     root.appendChild(grid);
 
     this.section(grid, "Quick Look card", [
@@ -123,24 +123,24 @@ export class HelpCard {
       ["Tab  ⇧Tab", "move between panes"],
     ]);
 
-    const footer = this.el("p", "zotql-footer");
+    const footer = this.el("p", "zotglance-footer");
     footer.textContent =
-      "Press ? or Esc to close. Settings → zotQL changes fonts, columns and more.";
+      "Press ? or Esc to close. Settings → ZotGlance changes fonts, columns and more.";
     root.appendChild(footer);
   }
 
   private section(grid: HTMLElement, heading: string, rows: Row[]): void {
-    const h = this.el("h2", "zotql-help-heading");
+    const h = this.el("h2", "zotglance-help-heading");
     h.textContent = heading;
     grid.appendChild(h);
     for (const [keys, does] of rows) {
-      const k = this.el("span", "zotql-help-keys");
+      const k = this.el("span", "zotglance-help-keys");
       for (const part of keys.split("  ")) {
         const kbd = this.el("kbd");
         kbd.textContent = part;
         k.appendChild(kbd);
       }
-      const d = this.el("span", "zotql-help-does");
+      const d = this.el("span", "zotglance-help-does");
       d.textContent = does;
       grid.append(k, d);
     }

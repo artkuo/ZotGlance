@@ -1,24 +1,24 @@
 {
-  "name": "zotql",
+  "name": "zotglance",
   "type": "module",
   "version": "0.1.0",
   "description": "Quick Look card and better type-to-select for the Zotero items list",
   "config": {
-    "addonName": "zotQL",
-    "addonID": "zotql@artkuo.dev",
-    "addonRef": "zotql",
-    "addonInstance": "ZotQL",
-    "prefsPrefix": "extensions.zotero.zotql"
+    "addonName": "ZotGlance",
+    "addonID": "zotglance@artkuo.dev",
+    "addonRef": "zotglance",
+    "addonInstance": "ZotGlance",
+    "prefsPrefix": "extensions.zotero.zotglance"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/artkuo/zotQL.git"
+    "url": "git+https://github.com/artkuo/ZotGlance.git"
   },
   "author": "Art Kuo",
   "bugs": {
-    "url": "https://github.com/artkuo/zotQL/issues"
+    "url": "https://github.com/artkuo/ZotGlance/issues"
   },
-  "homepage": "https://github.com/artkuo/zotQL#readme",
+  "homepage": "https://github.com/artkuo/ZotGlance#readme",
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "start": "zotero-plugin serve",

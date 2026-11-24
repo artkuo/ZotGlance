@@ -17,7 +17,7 @@ import {
 import { ensureStylesheet, HTML_NS } from "./quickLook";
 import { getPref } from "../utils/prefs";
 
-const PILL_ID = "zotql-typeselect";
+const PILL_ID = "zotglance-typeselect";
 const ITEMS_PANE_ID = "zotero-items-tree";
 /** Columns whose cell text isn't worth matching (icons and counts). */
 const SKIP_COLUMNS = new Set(["hasAttachment", "numNotes"]);
@@ -223,7 +223,7 @@ export class TypeSelect {
         },
       },
       ["item"],
-      "zotql-typeselect",
+      "zotglance-typeselect",
     );
   }
 
@@ -293,7 +293,7 @@ export class TypeSelect {
     pill.hidden = true;
     pill.setAttribute("role", "status");
     pill.setAttribute("aria-live", "polite");
-    for (const cls of ["zotql-ts-query", "zotql-ts-count"]) {
+    for (const cls of ["zotglance-ts-query", "zotglance-ts-count"]) {
       const span = doc.createElementNS(HTML_NS, "span") as HTMLElement;
       span.className = cls;
       pill.appendChild(span);

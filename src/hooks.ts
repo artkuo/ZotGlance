@@ -36,7 +36,7 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
   const controller = new KeyController(win);
   controller.attach();
   controllers.set(win, controller);
-  ztoolkit.log("zotQL loaded");
+  ztoolkit.log("ZotGlance loaded");
 }
 
 async function onMainWindowUnload(win: Window): Promise<void> {
@@ -59,10 +59,10 @@ function onPrefsEvent(type: string, data?: { window: Window }): void {
   if (type === "load" && data) {
     // Grey out the fixed-column checkboxes unless "these columns" is chosen.
     const doc = data.window.document;
-    const group = doc.getElementById("zotql-columns") as any;
+    const group = doc.getElementById("zotglance-columns") as any;
     const sync = () => {
       const fixed = group?.value === "fixed";
-      for (const box of doc.querySelectorAll<any>(".zotql-col")) {
+      for (const box of doc.querySelectorAll<any>(".zotglance-col")) {
         box.disabled = !fixed;
       }
     };

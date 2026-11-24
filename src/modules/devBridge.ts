@@ -3,7 +3,7 @@
  * dev Zotero instance from a terminal: `scripts/zq-eval.sh 'return ...'`.
  *
  * Registered only when the build is in development mode AND the dev profile
- * has `extensions.zotero.zotql.devToken` set (zotero-plugin.config.ts writes
+ * has `extensions.zotero.zotglance.devToken` set (zotero-plugin.config.ts writes
  * it from .env). Production builds never register it.
  *
  * Safety: Zotero's HTTP server only listens on 127.0.0.1 and already rejects
@@ -11,8 +11,8 @@
  * browser"); on top of that every request must carry the token header.
  */
 
-const PATH = "/zotql/dev/eval";
-const TOKEN_PREF = "extensions.zotero.zotql.devToken";
+const PATH = "/zotglance/dev/eval";
+const TOKEN_PREF = "extensions.zotero.zotglance.devToken";
 
 type EvalRequest = {
   method: string;
@@ -36,7 +36,7 @@ export function registerDevBridge(): void {
   Endpoint.prototype.supportedMethods = ["POST"];
   Endpoint.prototype.supportedDataTypes = ["text/plain"];
   Endpoint.prototype.init = async function (req: EvalRequest) {
-    if (req.headers["x-zotql-dev-token"] !== token) {
+    if (req.headers["x-zotglance-dev-token"] !== token) {
       return [403, "text/plain", "bad token\n"];
     }
     try {

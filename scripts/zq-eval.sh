@@ -22,8 +22,8 @@ if [[ "$PORT" == "23119" ]]; then
   exit 2
 fi
 if [[ $# -gt 0 ]]; then CODE="$1"; else CODE=$(cat); fi
-curl -sS --max-time 30 -X POST "http://127.0.0.1:${PORT}/zotql/dev/eval" \
+curl -sS --max-time 30 -X POST "http://127.0.0.1:${PORT}/zotglance/dev/eval" \
   -H "Content-Type: text/plain" \
-  -H "x-zotql-dev-token: ${TOKEN}" \
+  -H "x-zotglance-dev-token: ${TOKEN}" \
   --data-binary "$CODE"
 echo

@@ -17,8 +17,8 @@ import {
 import { getPref, setPref } from "../utils/prefs";
 
 export const HTML_NS = "http://www.w3.org/1999/xhtml";
-const ROOT_ID = "zotql-card";
-const STYLE_ID = "zotql-card-style";
+const ROOT_ID = "zotglance-card";
+const STYLE_ID = "zotglance-card-style";
 const FADE_MS = 120;
 const MIN_WIDTH = 280;
 const MIN_HEIGHT = 160;
@@ -199,7 +199,7 @@ export class QuickLook {
         },
       },
       ["tab", "item"],
-      "zotql-card",
+      "zotglance-card",
     );
   }
 
@@ -323,7 +323,7 @@ export class QuickLook {
     if (this.root?.isConnected) return;
     const doc = this.doc;
     ensureStylesheet(doc);
-    const root = this.el("div", "zotql-card");
+    const root = this.el("div", "zotglance-card");
     root.id = ROOT_ID;
     root.hidden = true;
     root.setAttribute("role", "dialog");
@@ -337,7 +337,7 @@ export class QuickLook {
       if (!onGrip) e.preventDefault();
       this.startResize(onGrip);
     });
-    this.body = this.el("div", "zotql-body");
+    this.body = this.el("div", "zotglance-body");
     root.appendChild(this.body);
     doc.documentElement!.appendChild(root);
     this.root = root;
@@ -412,9 +412,9 @@ export class QuickLook {
     const font =
       ABSTRACT_FONTS[String(getPref("abstractFont"))] ?? ABSTRACT_FONTS.serif;
     const size = Number(getPref("abstractSize")) || 100;
-    root.style.setProperty("--zotql-abstract-font", font);
+    root.style.setProperty("--zotglance-abstract-font", font);
     root.style.setProperty(
-      "--zotql-abstract-size",
+      "--zotglance-abstract-size",
       `${Math.max(50, Math.min(size, 200)) / 100}rem`,
     );
   }
@@ -426,12 +426,12 @@ export class QuickLook {
     const body = this.body!;
     body.replaceChildren();
 
-    const title = this.el("h1", "zotql-title");
+    const title = this.el("h1", "zotglance-title");
     title.textContent = model.title;
     body.appendChild(title);
 
     if (model.authors.shown.length) {
-      const p = this.el("p", "zotql-authors");
+      const p = this.el("p", "zotglance-authors");
       p.textContent =
         model.authors.shown.join("; ") +
         (model.authors.hiddenCount
@@ -441,9 +441,9 @@ export class QuickLook {
     }
 
     if (model.venue || model.meta.length) {
-      const p = this.el("p", "zotql-meta");
+      const p = this.el("p", "zotglance-meta");
       if (model.venue) {
-        const v = this.el("i", "zotql-venue");
+        const v = this.el("i", "zotglance-venue");
         v.textContent = model.venue;
         p.appendChild(v);
       }
@@ -458,7 +458,7 @@ export class QuickLook {
     }
 
     if (model.doiUrl || model.url) {
-      const p = this.el("p", "zotql-links");
+      const p = this.el("p", "zotglance-links");
       if (model.doiUrl)
         p.appendChild(this.link(`doi:${model.doi}`, model.doiUrl));
       if (model.url && model.url !== model.doiUrl) {
@@ -469,15 +469,15 @@ export class QuickLook {
     }
 
     if (model.attachments.length) {
-      const row = this.el("div", "zotql-attachments");
+      const row = this.el("div", "zotglance-attachments");
       for (const a of model.attachments) {
-        const b = this.el("button", `zotql-att zotql-att-${a.kind}`);
+        const b = this.el("button", `zotglance-att zotglance-att-${a.kind}`);
         b.title = a.title;
         b.setAttribute("aria-label", `Open ${a.title}`);
         if (a.id === model.highlightId) b.classList.add("highlight");
-        const icon = this.el("span", "zotql-att-icon");
+        const icon = this.el("span", "zotglance-att-icon");
         icon.textContent = KIND_LABEL[a.kind];
-        const label = this.el("span", "zotql-att-label");
+        const label = this.el("span", "zotglance-att-label");
         label.textContent = a.title;
         b.append(icon, label);
         b.addEventListener("click", () => {
@@ -489,7 +489,7 @@ export class QuickLook {
       body.appendChild(row);
     }
 
-    const abs = this.el("div", "zotql-abstract");
+    const abs = this.el("div", "zotglance-abstract");
     if (model.abstract.length) {
       for (const para of model.abstract) {
         const p = this.el("p");
@@ -503,7 +503,7 @@ export class QuickLook {
     body.appendChild(abs);
 
     if (model.notes.length) {
-      const ul = this.el("ul", "zotql-notes");
+      const ul = this.el("ul", "zotglance-notes");
       for (const n of model.notes) {
         const li = this.el("li");
         li.textContent = n.firstLine;
@@ -511,14 +511,14 @@ export class QuickLook {
         ul.appendChild(li);
       }
       if (model.moreNotes) {
-        const li = this.el("li", "zotql-more");
+        const li = this.el("li", "zotglance-more");
         li.textContent = `+${model.moreNotes} more`;
         ul.appendChild(li);
       }
       body.appendChild(ul);
     }
 
-    const footer = this.el("p", "zotql-footer");
+    const footer = this.el("p", "zotglance-footer");
     footer.textContent = model.footer.join(" · ");
     body.appendChild(footer);
 
@@ -526,7 +526,7 @@ export class QuickLook {
   }
 
   private link(text: string, href: string): HTMLElement {
-    const a = this.el("a", "zotql-link");
+    const a = this.el("a", "zotglance-link");
     a.textContent = text;
     a.setAttribute("href", href);
     a.addEventListener("click", (e) => {
@@ -543,7 +543,7 @@ export class QuickLook {
   }
 }
 
-/** Add zotQL's stylesheet (card and type-to-select indicator) once. */
+/** Add ZotGlance's stylesheet (card and type-to-select indicator) once. */
 export function ensureStylesheet(doc: Document): void {
   if (doc.getElementById(STYLE_ID)) return;
   const link = doc.createElementNS(HTML_NS, "link") as HTMLLinkElement;

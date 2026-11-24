@@ -1,4 +1,4 @@
-# zotQL — implementation notes
+# ZotGlance — implementation notes
 
 Findings from running code against Zotero 10.0.9 in the dev profile. PLAN.md is the design; this file records what the real app does.
 
@@ -7,8 +7,8 @@ Findings from running code against Zotero 10.0.9 in the dev profile. PLAN.md is 
 - `npm start` opens a **separate** Zotero using profile `~/Zotero-dev/zotql/profile`, data folder `~/Zotero-dev/zotql/data` and HTTP port 23129. Your real Zotero, profile and library (port 23119) are untouched. All the paths are in `.env`, which is git-ignored.
 - **Kill-command hazard.** On macOS, zotero-plugin-scaffold's default exit handler runs `kill -9 $(ps -x | grep zotero)`, which force-kills the real Zotero too. `.env` sets `ZOTERO_PLUGIN_KILL_COMMAND` to `pkill -f` on the dev profile path only. Tested: stopping `npm start` left the real Zotero running.
 - **Hot reload** works: saving a file in `src/` rebuilds the plugin and reloads it in the dev instance.
-- **Dev eval bridge** (`src/modules/devBridge.ts`, `scripts/zq-eval.sh`): a POST endpoint, `/zotql/dev/eval`, that runs a JavaScript async function body inside the dev Zotero, with `Zotero`, `win` and `addon` in scope, and returns the result as JSON.
-  - It's registered only in development builds, and only if the dev profile has the `extensions.zotero.zotql.devToken` pref, which the config writes from `.env`.
+- **Dev eval bridge** (`src/modules/devBridge.ts`, `scripts/zq-eval.sh`): a POST endpoint, `/zotglance/dev/eval`, that runs a JavaScript async function body inside the dev Zotero, with `Zotero`, `win` and `addon` in scope, and returns the result as JSON.
+  - It's registered only in development builds, and only if the dev profile has the `extensions.zotero.zotglance.devToken` pref, which the config writes from `.env`.
   - Requests without the token get 403, and Zotero itself drops requests that look like they come from a browser.
   - It's a no-op in production builds. The user approved it on 2026-11-23.
 - **Test library:** `scripts/zq-eval.sh < scripts/dev/seed.js` creates the “zotQL fixtures” collection with 38 rows. It's safe to run more than once. It includes:
@@ -54,7 +54,7 @@ To send trusted key events, use `nsITextInputProcessor` (`beginInputTransactionF
 
 **1. Space**
 
-- Without zotQL, Space while not typing calls `tree.onSelection(focused, false, true)`, which toggles the selection.
+- Without ZotGlance, Space while not typing calls `tree.onSelection(focused, false, true)`, which toggles the selection.
 - With a capture listener calling `preventDefault()` + `stopPropagation()`, nothing reaches Zotero: no `onSelection` call and no change to `_typingString`. The same holds for ⌥Space and ⌘Y.
 - While built-in typing is in progress, Space is appended to `_typingString` (“on m”), and the string clears after 1 s.
 - Eating Space mid-typing just drops the space (“o” stays “o”). Phase 2 replaces the built-in typing anyway, so it must stop all printable keys, as PLAN.md says.
@@ -153,16 +153,16 @@ Built with `keyState.ts` and `itemCard.ts` (both delegated to Command Code again
 
 ## Settings pane and resizable card (2026-11-23)
 
-- **Settings pane:** `addon/content/preferences.xhtml`, registered with `Zotero.PreferencePanes.register` in `onStartup`. The scaffold prefixes `preference="..."` with `extensions.zotero.zotql.` and `data-l10n-id`s with `zotql-`. The FTL file `preferences.ftl` becomes `zotql-preferences.ftl`, so the XHTML links `__addonRef__-preferences.ftl`.
+- **Settings pane:** `addon/content/preferences.xhtml`, registered with `Zotero.PreferencePanes.register` in `onStartup`. The scaffold prefixes `preference="..."` with `extensions.zotero.zotglance.` and `data-l10n-id`s with `zotglance-`. The FTL file `preferences.ftl` becomes `zotglance-preferences.ftl`, so the XHTML links `__addonRef__-preferences.ftl`.
 - **Prefs from the pane are strings:** Zotero's binding writes `elem.value`, so menulist-backed prefs (`abstractSize`, `typeSelectTimeoutMs`) are string prefs, and the code reads them with `Number()`.
-- **Inline handlers work:** the Reset Card Size button calls `Zotero.ZotQL.hooks.onPrefsEvent('resetCardSize')` from `oncommand`.
-- **Abstract font and size:** `--zotql-abstract-font` and `--zotql-abstract-size` are set on the card each time it opens. The abstract no longer has `max-width: 75ch`, so widening the card widens the text.
+- **Inline handlers work:** the Reset Card Size button calls `Zotero.ZotGlance.hooks.onPrefsEvent('resetCardSize')` from `oncommand`.
+- **Abstract font and size:** `--zotglance-abstract-font` and `--zotglance-abstract-size` are set on the card each time it opens. The abstract no longer has `max-width: 75ch`, so widening the card widens the text.
 - **Resizing:** the card has CSS `resize: both`.
   - Gotcha: `preventDefault()` on mousedown stops Firefox's resize grip, so the card's mousedown handler skips it within 16 px of the bottom-right corner, then refocuses the items list on mouseup.
   - On mousedown the height is pinned and the cap raised to the full pane, so a drag can go past the automatic 70% cap without a jump.
   - On mouseup a changed size is saved in `cardWidth`/`cardHeight` (px; 0 = automatic). It's clamped to the pane on every open, and stays centred.
   - Tested with `windowUtils.sendMouseEvent` drags: 640×493 → 760×643, kept after reopening.
-- **Icon:** the settings sidebar needs `image` in `PreferencePanes.register`, or it shows a placeholder. The M0 scaffold had copied zotquicksearch's icons; M5 replaced them with zotQL's own (a card over a space bar), drawn on a canvas in the dev Zotero.
+- **Icon:** the settings sidebar needs `image` in `PreferencePanes.register`, or it shows a placeholder. The M0 scaffold had copied zotquicksearch's icons; M5 replaced them with ZotGlance's own (a card over a space bar), drawn on a canvas in the dev Zotero.
 
 ## M5 (2026-11-23)
 

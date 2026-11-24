@@ -1,4 +1,4 @@
-// zotQL preferences, shown in Zotero's Settings → zotQL.
+// ZotGlance preferences, shown in Zotero's Settings → ZotGlance.
 // Values set from the settings pane are stored as strings.
 pref("cmdY", true);
 // Phase 2 type-to-select; false leaves typing to Zotero's built-in one.

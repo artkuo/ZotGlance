@@ -4,7 +4,7 @@ Work done in a forked side session after PLAN.md was finalised. Everything below
 
 ## What changed
 
-- **M0 scaffold done and merged.** Command Code built it from `tasks/m0-scaffold.md`, copying tooling from `../zotquicksearch` and renaming it to zotQL (`zotql@artkuo.dev`, addonRef `zotql`, prefs `extensions.zotero.zotql`, AGPL-3.0). `onMainWindowLoad` only logs `zotQL loaded`, with `// M2: keyController` placeholders. Claude reviewed it.
+- **M0 scaffold done and merged.** Command Code built it from `tasks/m0-scaffold.md`, copying tooling from `../zotquicksearch` and renaming it to ZotGlance (`zotglance@artkuo.dev`, addonRef `zotglance`, prefs `extensions.zotero.zotglance`, AGPL-3.0). `onMainWindowLoad` only logs `ZotGlance loaded`, with `// M2: keyController` placeholders. Claude reviewed it.
 - **`src/modules/matcher.ts` done** (part of M4's logic). It passes the contract tests in `test/unit/matcher.test.ts`. It's pure: `tokenize`, `wordsFrom`, `rowMatches`, `findMatch`. `tasks/matcher.md` no longer needs running.
 - Checks all pass: `npm run build`, `npm run test:unit` (Node's built-in runner, 16 tests, no Zotero needed) and `npm run lint:check`.
 - `AGENTS.md` holds the shared rules for every agent. `CLAUDE.md` imports it.
@@ -21,7 +21,7 @@ Work done in a forked side session after PLAN.md was finalised. Everything below
 
 ## Next steps
 
-1. **Finish M0's dev loop (Claude):** create a separate Zotero dev profile, `zotql-dev`, using a test library, never the real `/Users/artkuo/Zotero`. Write `.env` from `.env.example` (Zotero binary `/Applications/Zotero.app/Contents/MacOS/zotero`), and check that `npm start` hot-reloads and logs `zotQL loaded`.
+1. **Finish M0's dev loop (Claude):** create a separate Zotero dev profile, `zotglance-dev`, using a test library, never the real `/Users/artkuo/Zotero`. Write `.env` from `.env.example` (Zotero binary `/Applications/Zotero.app/Contents/MacOS/zotero`), and check that `npm start` hot-reloads and logs `ZotGlance loaded`.
 2. **M1 test build (Claude):** confirm the four assumptions in PLAN.md and record the results in `NOTES.md`.
 3. Then M2 onwards. Delegate `keyState.ts` and `itemCard.ts` by writing contract tests first, the same way as the matcher.
 
@@ -98,18 +98,25 @@ The user tested M4 in their real Zotero ("works very well") and asked for abstra
 
 ### Next steps now (need the user's go-ahead: outward-facing)
 
-1. Create the public GitHub repo `artkuo/zotQL` and push `main`.
-2. Tag `v0.1.0` and push the tag. The release workflow builds and publishes `zot-ql.xpi` and `update.json`.
+1. Create the public GitHub repo `artkuo/ZotGlance` and push `main`.
+2. Tag `v0.1.0` and push the tag. The release workflow builds and publishes `zot-glance.xpi` and `update.json`.
 3. The user installs the release `.xpi` in their real Zotero.
 4. Submit to Zotero's plugin list (zotero.org/support/plugins): check the current submission instructions first.
 
 ## Update 2026-11-24: public on GitHub
 
 - Before publishing: the `?` help card was added, and `+`/`-` now reach Zotero again. See NOTES.md.
-- https://github.com/artkuo/zotQL is public (AGPL-3.0, detected by GitHub). `main` is pushed, and the first CI run passed: lint, unit, build.
+- https://github.com/artkuo/ZotGlance is public (AGPL-3.0, detected by GitHub). `main` is pushed, and the first CI run passed: lint, unit, build.
 
 ### Next steps now
 
-1. **Release (needs the user's OK):** `npm run release` bumps the version, tags and pushes. The tag triggers `release.yml`, which publishes `zot-ql.xpi` and `update.json`. Start at v0.1.0.
+1. **Release (needs the user's OK):** `npm run release` bumps the version, tags and pushes. The tag triggers `release.yml`, which publishes `zot-glance.xpi` and `update.json`. Start at v0.1.0.
 2. The user installs the release `.xpi` in their real Zotero.
 3. Submit to Zotero's plugin list (zotero.org/support/plugins). Check the current instructions first.
+
+## Update 2026-11-24: renamed to ZotGlance
+
+- New identity: addonName `ZotGlance`, ID `zotglance@artkuo.dev`, ref `zotglance`, instance `Zotero.ZotGlance`, prefs `extensions.zotero.zotglance.*`, file `zot-glance.xpi`, repo `artkuo/ZotGlance`. CSS ids and classes are `zotglance-*`.
+- Kept on purpose (dev-only or local): the env vars `ZOTQL_DEV_PORT`/`ZOTQL_DEV_TOKEN`, the dev profile `~/Zotero-dev/zotql`, the local checkout folder `zotQL`, `../zotQL-worktrees`, and the "zotQL fixtures" test collection.
+- `tasks/` and `test/` were not touched; the old task specs are history.
+- The user's real Zotero has the hand-installed zotQL (`zotql@artkuo.dev`). It must be removed before installing ZotGlance, or both take Space.

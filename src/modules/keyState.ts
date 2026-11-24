@@ -1,5 +1,5 @@
 /**
- * Pure key-handling state machine for the zotQL items list (PLAN.md, "Key
+ * Pure key-handling state machine for the ZotGlance items list (PLAN.md, "Key
  * handling"). It is pure — no Zotero, toolkit or DOM imports — so the logic
  * can be unit-tested under `node --test` (`test/unit/keyState.test.ts`).
  * `keyController.ts` calls it on every `keydown` and carries out the effects

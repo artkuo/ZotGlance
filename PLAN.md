@@ -1,4 +1,4 @@
-# zotQL — plan
+# ZotGlance — plan
 
 A Zotero plugin that changes how the **items list behaves when it has keyboard focus**. It is not a search tool. It adds no search box or results window and doesn't touch Zotero's search bar. It only changes what keys do while you're in the list:
 
@@ -22,7 +22,7 @@ So the plugin attaches one capture-phase `keydown` listener to the items tree. Z
 
 ## Other plugins installed in your profile that use keys
 
-These are separate plugins. zotQL doesn't depend on them or integrate with them. They're listed only to make sure the keys don't clash.
+These are separate plugins. ZotGlance doesn't depend on them or integrate with them. They're listed only to make sure the keys don't clash.
 
 | Plugin                 | Keys                                                           | Conflict?                                                                         |
 | ---------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------- |
@@ -36,14 +36,14 @@ No attachment Quick Look plugin (zotLook, etc.) is installed, so nothing else ta
 
 ## Architecture
 
-zotQL is a standalone plugin with no code or runtime link to zotquicksearch. `../zotquicksearch` is used only as a **build template**, because it already has a working setup: zotero-plugin-template, zotero-plugin-scaffold, TypeScript, esbuild and zotero-plugin-toolkit. Copy its `package.json` scripts, `zotero-plugin.config.ts`, `tsconfig`, lint config and the `src/{addon,hooks,index}.ts` bootstrap, then rename the IDs:
+ZotGlance is a standalone plugin with no code or runtime link to zotquicksearch. `../zotquicksearch` is used only as a **build template**, because it already has a working setup: zotero-plugin-template, zotero-plugin-scaffold, TypeScript, esbuild and zotero-plugin-toolkit. Copy its `package.json` scripts, `zotero-plugin.config.ts`, `tsconfig`, lint config and the `src/{addon,hooks,index}.ts` bootstrap, then rename the IDs:
 
 ```
-addonName:     zotQL
-addonID:       zotql@artkuo.dev
-addonRef:      zotql
-addonInstance: ZotQL
-prefsPrefix:   extensions.zotero.zotql
+addonName:     ZotGlance
+addonID:       zotglance@artkuo.dev
+addonRef:      zotglance
+addonInstance: ZotGlance
+prefsPrefix:   extensions.zotero.zotglance
 ```
 
 ```
@@ -137,7 +137,7 @@ Phase 2 type-to-select on/off (fall back to the built-in one), which columns to 
 **M0 — scaffold and dev loop (about 1 session)**
 
 - Copy the zotquicksearch tooling into this repo, rename the IDs and `npm install`.
-- Create a separate **dev profile** (`/Applications/Zotero.app/Contents/MacOS/zotero -P`, profile “zotql-dev”), pointed at a copy of your data directory or a small test library so development never touches your real library. Put the paths in `.env`, which is git-ignored.
+- Create a separate **dev profile** (`/Applications/Zotero.app/Contents/MacOS/zotero -P`, profile “zotglance-dev”), pointed at a copy of your data directory or a small test library so development never touches your real library. Put the paths in `.env`, which is git-ignored.
 - Get `npm start` hot reload working: scaffold serves the build into the dev profile and reloads on save.
 - First commit on `main` (the repo has no commits yet and is on `master`; rename the branch).
 
@@ -174,7 +174,7 @@ The result is a throwaway “Space logs the focused item title” build. Record 
 **M5 — settings, packaging, release**
 
 - Settings pane and Fluent strings. A README with a GIF.
-- Public GitHub repo (`artkuo/zotQL`) under AGPL-3.0, with a LICENSE file. Set up the template's GitHub Actions release workflow so `npm run release` builds the `.xpi` and `update.json`, and tagged releases publish them.
+- Public GitHub repo (`artkuo/ZotGlance`) under AGPL-3.0, with a LICENSE file. Set up the template's GitHub Actions release workflow so `npm run release` builds the `.xpi` and `update.json`, and tagged releases publish them.
 - Install it into your real profile from the release `.xpi`.
 - Submit it to Zotero's plugin list, following the current instructions on zotero.org/support/plugins. Before submitting, check that the minimum and maximum Zotero versions in the manifest are honest and that there is an English README with screenshots.
 
