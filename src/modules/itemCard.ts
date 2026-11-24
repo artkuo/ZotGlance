@@ -249,16 +249,31 @@ export function buildCard(item: ItemData): CardModel {
     })
     .map(({ id, title: t, kind }) => ({ id, title: t, kind }));
 
-  const noteLines: { id: number; firstLine: string }[] = [];
-  let moreNotes = 0;
+  const allNonEmptyNotes: { id: number; firstLine: string }[] = [];
   for (const note of item.notes ?? []) {
     const firstLine = noteFirstLine(note.html ?? "");
     if (!firstLine) continue;
-    if (noteLines.length < MAX_NOTES) {
-      noteLines.push({ id: note.id, firstLine });
+    allNonEmptyNotes.push({ id: note.id, firstLine });
+  }
+
+  let noteLines: { id: number; firstLine: string }[];
+  let moreNotes: number;
+  if (allNonEmptyNotes.length <= MAX_NOTES) {
+    noteLines = allNonEmptyNotes;
+    moreNotes = 0;
+  } else {
+    const highlightIndex = allNonEmptyNotes.findIndex(
+      (n) => n.id === item.highlightId,
+    );
+    if (highlightIndex >= MAX_NOTES) {
+      noteLines = [
+        ...allNonEmptyNotes.slice(0, MAX_NOTES - 1),
+        allNonEmptyNotes[highlightIndex],
+      ];
     } else {
-      moreNotes += 1;
+      noteLines = allNonEmptyNotes.slice(0, MAX_NOTES);
     }
+    moreNotes = allNonEmptyNotes.length - MAX_NOTES;
   }
 
   const footer = [item.itemTypeLabel];
