@@ -334,3 +334,51 @@ test("buildCard: attachment ordering is by kind then input order; embedded image
     ],
   );
 });
+
+// --- M3: a highlighted note is always shown (tasks/itemCard-highlight.md) ---
+
+const notes5 = [
+  { id: 10, html: "<p>One</p>" },
+  { id: 11, html: "<p>Two</p>" },
+  { id: 12, html: "<p></p>" },
+  { id: 13, html: "<p>Three</p>" },
+  { id: 14, html: "<p>Four</p>" },
+  { id: 15, html: "<p>Five</p>" },
+];
+
+test("highlighted note within the first MAX_NOTES: unchanged", () => {
+  const card = buildCard(item({ notes: notes5, highlightId: 11 }));
+  assert.deepEqual(
+    card.notes.map((n) => n.id),
+    [10, 11, 13],
+  );
+  assert.equal(card.moreNotes, 2);
+});
+
+test("highlighted note past MAX_NOTES replaces the last slot", () => {
+  const card = buildCard(item({ notes: notes5, highlightId: 15 }));
+  assert.deepEqual(
+    card.notes.map((n) => [n.id, n.firstLine]),
+    [
+      [10, "One"],
+      [11, "Two"],
+      [15, "Five"],
+    ],
+  );
+  assert.equal(card.notes.length, MAX_NOTES);
+  assert.equal(card.moreNotes, 2);
+});
+
+test("highlighted empty note, or an attachment id, changes nothing", () => {
+  const empty = buildCard(item({ notes: notes5, highlightId: 12 }));
+  assert.deepEqual(
+    empty.notes.map((n) => n.id),
+    [10, 11, 13],
+  );
+  assert.equal(empty.moreNotes, 2);
+  const other = buildCard(item({ notes: notes5, highlightId: 999 }));
+  assert.deepEqual(
+    other.notes.map((n) => n.id),
+    [10, 11, 13],
+  );
+});
