@@ -56,3 +56,58 @@ export function findMatch(
   }
   return -1;
 }
+
+/** One token -> runs of letters and runs of digits; anything else separates and is dropped. */
+export function splitLetterDigit(token: string): string[] {
+  return token.match(/[\p{L}]+|[\p{N}]+/gu) ?? [];
+}
+
+/**
+ * Typed text -> tiers of tokens, strictest first.
+ * tiers[0] = tokenize(text) (tier 1, "as typed").
+ * tiers[1] = every tier-1 token passed through splitLetterDigit, flattened
+ *            (tier 2), included only when it is non-empty and differs from tier 1.
+ * No tokens -> [].
+ */
+export function tierTokens(text: string): string[][] {
+  const tier1 = tokenize(text);
+  if (tier1.length === 0) return [];
+  const tier2 = tier1.flatMap(splitLetterDigit);
+  if (tier2.length === 0 || tokensEqual(tier1, tier2)) return [tier1];
+  return [tier1, tier2];
+}
+
+/**
+ * Try each tier in order over the whole list with findMatch (same from,
+ * direction, inclusive). Return the first tier that matches any row:
+ * { index, tier } where tier is the index into tiers. None -> { index: -1, tier: -1 }.
+ */
+export function findTieredMatch(
+  rowCount: number,
+  getWords: (index: number) => readonly string[],
+  tiers: readonly (readonly string[])[],
+  from: number,
+  direction: 1 | -1,
+  inclusive: boolean,
+): { index: number; tier: number } {
+  for (let tier = 0; tier < tiers.length; tier++) {
+    const index = findMatch(
+      rowCount,
+      getWords,
+      tiers[tier],
+      from,
+      direction,
+      inclusive,
+    );
+    if (index !== -1) return { index, tier };
+  }
+  return { index: -1, tier: -1 };
+}
+
+function tokensEqual(a: readonly string[], b: readonly string[]): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
