@@ -171,3 +171,15 @@ Built with `keyState.ts` and `itemCard.ts` (both delegated to Command Code again
 - **Manifest:** `strict_min_version` is `10.0` and `strict_max_version` `10.*`, since the plugin is tested only on 10.0.9 and uses Zotero 10 internals. Raise the maximum after testing each new major version.
 - **CI:** lint, build and unit tests. Zotero's own `npm run test` is left out because it needs a Zotero binary.
 - **README screenshots** in `docs/` come from the dev library. The dev window must be visible (front, not occluded) or snapshots are stale and selection changes wait for rAF. `win.document.hidden` tells you which.
+
+## "?" help card and punctuation keys (2026-11-23)
+
+- **Bug fixed:** with type-to-select on, `+` and `-` were typed text, so Zotero's expand-all and collapse-all stopped working. That contradicted PLAN.md's key table, and the original contract test encoded it.
+  - Now, when not typing, a printable key that isn't a letter or digit doesn't start typing: `?` opens help, `+`/`-` go to Zotero, and anything else is swallowed. Typed words can only ever match letters and digits, so punctuation typed first was useless anyway.
+  - While typing, every printable key is still typed text. `-` is useful there, since tier 2 splits "co-author".
+  - Checked in dev: `+` took the fixtures from 39 to 48 rows and `-` back to 39; `.` shows no indicator, and Zotero's `_typingString` stays empty.
+- **Help card** (`helpCard.ts`): opened by `?` when not typing (it replaces the Quick Look card if that's open).
+  - `?`, Esc and Space close it and do nothing else. Any other key closes it and then does its normal job (↓ moves the selection).
+  - A click, window blur, or focus leaving the list also closes it.
+  - It may extend below the panes to the window's bottom edge, so the whole list fits at 1280×800.
+  - The keyState change was delegated against `test/unit/keyHelp.test.ts` (87/87).

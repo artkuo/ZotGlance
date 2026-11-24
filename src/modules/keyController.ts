@@ -16,6 +16,7 @@ import {
 } from "./keyState";
 import { QuickLook } from "./quickLook";
 import { TypeSelect } from "./typeSelect";
+import { HelpCard } from "./helpCard";
 import { getPref } from "../utils/prefs";
 
 /** The focusable element of the main items tree (Zotero 10). */
@@ -24,6 +25,7 @@ export const ITEMS_TREE_ID = "item-tree-main-default";
 export class KeyController {
   readonly quickLook: QuickLook;
   readonly typeSelect: TypeSelect;
+  readonly help: HelpCard;
   private readonly win: _ZoteroTypes.MainWindow;
   private state: KeyState = INITIAL_STATE;
   private readonly onKeyDown = (e: KeyboardEvent) => this.handle(e);
@@ -32,6 +34,10 @@ export class KeyController {
     this.win = win;
     this.quickLook = new QuickLook(win);
     this.typeSelect = new TypeSelect(win);
+    this.help = new HelpCard(win);
+    this.help.onClosed = () => {
+      this.state = { ...this.state, helpOpen: false };
+    };
     // The card can also close on its own (click outside, tab change, ...).
     this.quickLook.onClosed = () => {
       this.state = { ...this.state, cardOpen: false };
@@ -48,6 +54,7 @@ export class KeyController {
     this.win.removeEventListener("keydown", this.onKeyDown, true);
     this.quickLook.destroy();
     this.typeSelect.destroy();
+    this.help.destroy();
   }
 
   private options(): KeyOptions {
@@ -126,8 +133,10 @@ export class KeyController {
         );
         break;
       case "openHelp":
+        this.help.open();
+        break;
       case "closeHelp":
-        // help card: orchestrator
+        this.help.close();
         break;
     }
   }

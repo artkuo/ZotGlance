@@ -5,6 +5,10 @@ A Zotero plugin that makes the items list nicer to use from the keyboard.
 - **Quick Look:** press **Space** on an item to see its details in a card over the list, much as Space shows a preview in macOS Finder. Press Space again (or Esc) to close it.
 - **Better type-to-select:** start typing to jump to an item. zotQL matches every column shown in the list, and every author, not just the column the list is sorted by. Type `kuo 2010`, or just `kuo2010`, to jump to Kuo's 2010 paper.
 
+Press **?** in the items list for a card listing all the keys.
+
+![The ? help card](docs/help.png)
+
 zotQL only changes how keys behave while the items list has focus. It doesn't filter or search your library, and it never changes your items.
 
 Requires **Zotero 10**. Developed and tested on macOS.
@@ -50,6 +54,7 @@ With the items list focused, type part of a title, an author's surname or a year
 - **⌘G** and **⇧⌘G** go to the next and previous match.
 - While you're typing, Space adds a space. Typing ends 1.5 seconds after your last key (adjustable), and then Space opens the card again.
 - Accents don't matter: `muller` finds "Müller".
+- Typing starts with a letter or digit. Punctuation typed first doesn't start it: `?` shows the keys, and `+` and `-` still expand and collapse all rows, as in Zotero.
 
 Nothing is hidden or filtered; the selection just moves.
 
