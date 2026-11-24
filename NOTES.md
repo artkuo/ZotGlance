@@ -135,3 +135,18 @@ Built with `keyState.ts` and `itemCard.ts` (both delegated to Command Code again
 - **Stylesheet:** the link has a `?timestamp` query, because Zotero's chrome cache otherwise serves the old CSS after a hot reload.
 
 **Still to check by hand:** a physical ⌥Space keypress (`e.key` is `" "`; the code matches on `e.code`), and how the fade feels in real use.
+
+## M4 results (2026-11-23)
+
+**Done and checked in the dev instance** (trusted key events, window visible)
+
+- **Shown columns:** read with `itemsView._getColumns().filter(c => !c.hidden)`; the `dataKey`s are `title`, `firstCreator`, `year`, ... Cell text comes from `itemsView.getCellText(row, dataKey)`, which reads Zotero's own row cache (`_rowCache`, keyed by item id). `hasAttachment` and `numNotes` are skipped. To show or hide a column in tests: `iv.tree._columns.toggleHidden(index)`.
+- **Creator:** matches every creator's `lastName` (or `name` for single-field names). Typing "smith" found an article whose Smith is the 3rd author, and "donelan" one whose Donelan is the 2nd.
+- **Tier 2:** with Year shown, "kuo2010" finds Kuo's 2010 article (tier 1 matches nothing). Delegated against `test/unit/matcherTiers.test.ts`.
+- **Moving the selection:** the same calls as Zotero's own type-to-select, `tree.scrollToRow(i)` then `tree.onSelection(i)`. The card follows.
+- **Built-in typing is off:** `tree._typingString` stays empty while typing.
+- **Indicator:** a pill at the bottom centre of `#zotero-items-tree` with the typed text, a caret and "2 of 5" / "1 match" / "no match" (red). It hides 1.5 s after the last key (`typeSelectTimeoutMs`) or at once on Esc.
+- **Space:** while typing, Space goes into the typed text, with the card open or closed. After the timeout it toggles the card again.
+- **⌘G / ⇧⌘G:** next and previous match, with the counter updated. They reuse the tier that found the current match.
+- **Word cache:** keyed by item id, so sorting and switching collections keep it. It's cleared when the shown columns change, and item notifier events drop the changed items.
+- **Speed:** 39 rows took 1.8 ms cold and 0.3 ms warm (about 45 µs per row cold, mostly Zotero's `_getRowData`). At that rate, 10,000 rows would take about 0.5 s on the first keystroke. Measure in a real library before release, and index lazily from the focused row if it's slow (PLAN.md).

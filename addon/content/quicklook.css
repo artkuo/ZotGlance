@@ -175,3 +175,45 @@
   font-size: 11px;
   color: var(--fill-tertiary, #8e8e93);
 }
+
+/* Type-to-select indicator (phase 2): a pill at the bottom of the items list
+   showing what was typed and how many rows match. */
+#zotql-typeselect {
+  position: fixed;
+  z-index: 1001;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  max-width: 60vw;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--material-border-quarternary, rgba(0, 0, 0, 0.12));
+  background: var(--material-background, #fff);
+  color: var(--fill-primary, #1d1d1f);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  font: message-box;
+  font-size: 13px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+#zotql-typeselect[hidden] {
+  display: none;
+}
+
+#zotql-typeselect .zotql-ts-query {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  white-space: pre;
+}
+
+#zotql-typeselect .zotql-ts-count {
+  font-size: 11px;
+  color: var(--fill-secondary, #6e6e73);
+}
+
+#zotql-typeselect.nomatch .zotql-ts-count {
+  color: #d93025;
+}

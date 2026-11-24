@@ -15,7 +15,7 @@ import {
   type ItemData,
 } from "./itemCard";
 
-const HTML_NS = "http://www.w3.org/1999/xhtml";
+export const HTML_NS = "http://www.w3.org/1999/xhtml";
 const ROOT_ID = "zotql-card";
 const STYLE_ID = "zotql-card-style";
 const FADE_MS = 120;
@@ -304,15 +304,7 @@ export class QuickLook {
   private ensureDom(): void {
     if (this.root?.isConnected) return;
     const doc = this.doc;
-    if (!doc.getElementById(STYLE_ID)) {
-      const link = doc.createElementNS(HTML_NS, "link") as HTMLLinkElement;
-      link.id = STYLE_ID;
-      link.rel = "stylesheet";
-      // The query defeats Zotero's chrome cache, so a plugin reload or
-      // update picks up the new stylesheet.
-      link.href = `chrome://${addon.data.config.addonRef}/content/quicklook.css?${Date.now()}`;
-      doc.documentElement!.appendChild(link);
-    }
+    ensureStylesheet(doc);
     const root = this.el("div", "zotql-card");
     root.id = ROOT_ID;
     root.hidden = true;
@@ -466,6 +458,18 @@ export class QuickLook {
     if (className) e.className = className;
     return e;
   }
+}
+
+/** Add zotQL's stylesheet (card and type-to-select indicator) once. */
+export function ensureStylesheet(doc: Document): void {
+  if (doc.getElementById(STYLE_ID)) return;
+  const link = doc.createElementNS(HTML_NS, "link") as HTMLLinkElement;
+  link.id = STYLE_ID;
+  link.rel = "stylesheet";
+  // The query defeats Zotero's chrome cache, so a plugin reload or update
+  // picks up the new stylesheet.
+  link.href = `chrome://${addon.data.config.addonRef}/content/quicklook.css?${Date.now()}`;
+  doc.documentElement!.appendChild(link);
 }
 
 const KIND_LABEL: Record<CardModel["attachments"][number]["kind"], string> = {

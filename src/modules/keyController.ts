@@ -15,6 +15,7 @@ import {
   type KeyState,
 } from "./keyState";
 import { QuickLook } from "./quickLook";
+import { TypeSelect } from "./typeSelect";
 import { getPref } from "../utils/prefs";
 
 /** The focusable element of the main items tree (Zotero 10). */
@@ -22,6 +23,7 @@ export const ITEMS_TREE_ID = "item-tree-main-default";
 
 export class KeyController {
   readonly quickLook: QuickLook;
+  readonly typeSelect: TypeSelect;
   private readonly win: _ZoteroTypes.MainWindow;
   private state: KeyState = INITIAL_STATE;
   private readonly onKeyDown = (e: KeyboardEvent) => this.handle(e);
@@ -29,6 +31,7 @@ export class KeyController {
   constructor(win: _ZoteroTypes.MainWindow) {
     this.win = win;
     this.quickLook = new QuickLook(win);
+    this.typeSelect = new TypeSelect(win);
     // The card can also close on its own (click outside, tab change, ...).
     this.quickLook.onClosed = () => {
       this.state = { ...this.state, cardOpen: false };
@@ -44,6 +47,7 @@ export class KeyController {
   detach(): void {
     this.win.removeEventListener("keydown", this.onKeyDown, true);
     this.quickLook.destroy();
+    this.typeSelect.destroy();
   }
 
   private options(): KeyOptions {
@@ -67,6 +71,7 @@ export class KeyController {
       return;
     }
 
+    const options = this.options();
     const tree = (this.win.ZoteroPane?.itemsView as any)?.tree;
     const result = reduceKey(
       this.state,
@@ -79,7 +84,7 @@ export class KeyController {
         shiftKey: e.shiftKey,
       },
       Date.now(),
-      this.options(),
+      options,
       { builtinTyping: (tree?._typingString?.length ?? 0) > 0 },
     );
     this.state = result.state;
@@ -87,10 +92,10 @@ export class KeyController {
       e.preventDefault();
       e.stopPropagation();
     }
-    for (const effect of result.effects) this.run(effect);
+    for (const effect of result.effects) this.run(effect, options);
   }
 
-  private run(effect: Effect): void {
+  private run(effect: Effect, options: KeyOptions): void {
     switch (effect.type) {
       case "openCard":
         if (!this.quickLook.open()) {
@@ -108,9 +113,17 @@ export class KeyController {
         this.quickLook.scroll(effect.direction);
         break;
       case "typed":
+        this.typeSelect.typed(effect.text, options.timeoutMs);
+        break;
       case "endTyping":
+        this.typeSelect.end();
+        break;
       case "findNext":
-        // Phase 2 (M4): typeSelect.ts. Unreachable while typeSelect is off.
+        this.typeSelect.findNext(
+          effect.text,
+          effect.direction,
+          options.timeoutMs,
+        );
         break;
     }
   }

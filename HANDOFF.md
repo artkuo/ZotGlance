@@ -71,3 +71,13 @@ See NOTES.md "M3 results". The delegated highlighted-note change merged cleanly 
    - Delegate tier 2 of the matcher: write its contract tests and `tasks/matcher-tiers.md`.
    - Claude writes `typeSelect.ts`: the indicator, and the index over shown columns using `_getColumns()` and `getCellText`, with every creator surname.
    - Wire the `typed`, `endTyping` and `findNext` effects in `keyController`, then turn the `typeSelect` pref on.
+
+## Update 2026-11-23 (night): M4 done
+
+- Tier 2 of the matcher was delegated against `test/unit/matcherTiers.test.ts`. With `delegate.sh` now installing first, Command Code ran build, tests and lint itself, and the merge was clean (73/73).
+- `typeSelect.ts` (Claude): the indicator, the word index over shown columns with every creator surname, and ⌘G. The `typed`, `endTyping` and `findNext` effects are wired in `keyController`, and the `typeSelect` pref is on by default. See NOTES.md "M4 results".
+
+### Next steps now
+
+1. **You, by hand:** ⌥Space and the fade (from M3), and type-to-select in a real-sized library, to check the first-keystroke delay.
+2. **M5:** settings pane (type-to-select on/off, matched columns, timeout, ⌘Y), README, release workflow, plugin-list submission. Mostly delegable.
