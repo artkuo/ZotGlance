@@ -56,6 +56,10 @@ Work done in a forked side session after PLAN.md was finalised. Everything below
    - Wire the `typed`, `endTyping` and `findNext` effects in `keyController`, and turn the `typeSelect` pref on by default.
    - The indicator's CSS could be delegated.
 
+## Update 2026-11-23 (night): delegate installs first
+
+`delegate.sh` now runs `npm install` in the worktree before starting Command Code, so the agent can run build and lint itself. npm's output goes to `.delegate-logs/<task>.install.log`, and the script stops with an error if the install fails. Before this, the install ran only after the agent had finished, and its output was discarded.
+
 ## Update 2026-11-23 (evening): M3 done
 
 See NOTES.md "M3 results". The delegated highlighted-note change merged cleanly (60/60 tests). That worktree's `npm install` didn't run, so `delegate.sh` reported a build failure. That only reflects the worktree; the build passes on main.

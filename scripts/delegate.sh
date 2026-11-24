@@ -26,6 +26,16 @@ if [[ ! -d $wt ]]; then
   git -C "$repo" worktree add -q -b "$branch" "$wt" "$base" || exit 2
 fi
 
+# Install dependencies before the agent starts, so it can run build and lint
+# itself. A fresh worktree has no node_modules.
+if [[ -f $wt/package.json && ! -d $wt/node_modules ]]; then
+  if ! (cd "$wt" && npm install) >"$logdir/$task.install.log" 2>&1; then
+    echo "npm install failed in $wt; see $logdir/$task.install.log" >&2
+    tail -n 15 "$logdir/$task.install.log" >&2
+    exit 2
+  fi
+fi
+
 prompt="$(cat "$repo/AGENTS.md")
 
 ---
@@ -66,7 +76,9 @@ if [[ ! -f package.json ]]; then
   echo "SKIP checks: no package.json (agent made no scaffold)"
   checks=()
 else
-  [[ -d node_modules ]] || npm install --silent >/dev/null 2>&1
+  # Covers an agent that created package.json itself (the M0 scaffold).
+  [[ -d node_modules ]] || npm install >"$logdir/$task.install.log" 2>&1 ||
+    echo "WARN npm install failed (see $logdir/$task.install.log)"
   checks=(build test:unit)
 fi
 for check in "${checks[@]}"; do
