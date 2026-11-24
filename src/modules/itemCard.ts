@@ -155,22 +155,25 @@ export function htmlToParagraphs(text: string): string[] {
 }
 
 function decodeEntities(text: string): string {
-  return text
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex: string) => {
-      const cp = parseInt(hex, 16);
-      return safeCodePoint(cp);
-    })
-    .replace(/&#(\d+);/g, (_, dec: string) => {
-      const cp = parseInt(dec, 10);
-      return safeCodePoint(cp);
-    })
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&apos;/g, "'");
+  return (
+    text
+      .replace(/&#x([0-9a-fA-F]+);/g, (_, hex: string) => {
+        const cp = parseInt(hex, 16);
+        return safeCodePoint(cp);
+      })
+      .replace(/&#(\d+);/g, (_, dec: string) => {
+        const cp = parseInt(dec, 10);
+        return safeCodePoint(cp);
+      })
+      .replace(/&nbsp;/g, " ")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&apos;/g, "'")
+      // Last, so "&amp;lt;" stays "&lt;" instead of becoming "<".
+      .replace(/&amp;/g, "&")
+  );
 }
 
 function safeCodePoint(cp: number): string {

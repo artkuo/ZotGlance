@@ -1,0 +1,168 @@
+/* zotQL Quick Look card. Colours come from Zotero's theme variables, with
+   fallbacks, so light and dark mode follow Zotero. */
+
+#zotql-card {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--material-border-quarternary, rgba(0, 0, 0, 0.12));
+  background: var(--material-background, #fff);
+  color: var(--fill-primary, #1d1d1f);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.28),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+  font: message-box;
+  opacity: 0;
+  transform: scale(0.98);
+  transition:
+    opacity 120ms ease-out,
+    transform 120ms ease-out;
+}
+
+#zotql-card.open {
+  opacity: 1;
+  transform: none;
+}
+
+#zotql-card[hidden] {
+  display: none;
+}
+
+#zotql-card .zotql-body {
+  overflow-y: auto;
+  padding: 20px 26px 14px;
+}
+
+#zotql-card .zotql-title {
+  margin: 0 0 8px;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+#zotql-card .zotql-authors {
+  margin: 0 0 4px;
+  font-size: 13px;
+}
+
+#zotql-card .zotql-meta,
+#zotql-card .zotql-links {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: var(--fill-secondary, #6e6e73);
+}
+
+#zotql-card .zotql-link {
+  color: var(--accent-blue, #0a64d6);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#zotql-card .zotql-link:hover {
+  text-decoration: underline;
+}
+
+#zotql-card .zotql-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 2px;
+}
+
+#zotql-card .zotql-att {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 260px;
+  padding: 3px 9px 3px 4px;
+  border: 1px solid var(--material-border-quarternary, rgba(0, 0, 0, 0.15));
+  border-radius: 6px;
+  background: var(--material-sidepane, rgba(0, 0, 0, 0.03));
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#zotql-card .zotql-att:hover {
+  background: var(--fill-quinary, rgba(0, 0, 0, 0.07));
+}
+
+#zotql-card .zotql-att.highlight {
+  outline: 2px solid var(--accent-blue, #0a64d6);
+  outline-offset: 1px;
+}
+
+#zotql-card .zotql-att-icon {
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: var(--fill-tertiary, #8e8e93);
+  color: var(--material-background, #fff);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+#zotql-card .zotql-att-pdf .zotql-att-icon {
+  background: #d93025;
+  color: #fff;
+}
+
+#zotql-card .zotql-att-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Same size as the items list (Zotero's root font size, so it follows the
+   font-size setting), tight enough that a ~300-word abstract fits. */
+#zotql-card .zotql-abstract {
+  margin: 12px 0 0;
+  max-width: 75ch;
+  font-family: Charter, "Iowan Old Style", Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+#zotql-card .zotql-abstract p {
+  margin: 0 0 0.5em;
+}
+
+#zotql-card .zotql-abstract.empty {
+  font-family: inherit;
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--fill-secondary, #6e6e73);
+}
+
+#zotql-card .zotql-notes {
+  margin: 10px 0 0;
+  padding: 8px 0 0 18px;
+  border-top: 1px solid var(--material-border-quinary, rgba(0, 0, 0, 0.08));
+  font-size: 12px;
+  color: var(--fill-secondary, #6e6e73);
+}
+
+#zotql-card .zotql-notes li {
+  margin: 2px 0;
+}
+
+#zotql-card .zotql-notes li.highlight {
+  color: var(--fill-primary, #1d1d1f);
+  font-weight: 600;
+}
+
+#zotql-card .zotql-notes .zotql-more {
+  list-style: none;
+  font-style: italic;
+}
+
+#zotql-card .zotql-footer {
+  margin: 12px 0 0;
+  font-size: 11px;
+  color: var(--fill-tertiary, #8e8e93);
+}

@@ -1,5 +1,9 @@
 import { createZToolkit } from "./utils/ztoolkit";
 import { registerDevBridge, unregisterDevBridge } from "./modules/devBridge";
+import { KeyController } from "./modules/keyController";
+
+/** One controller per main window. */
+const controllers = new Map<Window, KeyController>();
 
 async function onStartup() {
   await Promise.all([
@@ -20,15 +24,21 @@ async function onStartup() {
 
 async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
   addon.data.ztoolkit = createZToolkit();
-  // M2: keyController
+  controllers.get(win)?.detach();
+  const controller = new KeyController(win);
+  controller.attach();
+  controllers.set(win, controller);
   ztoolkit.log("zotQL loaded");
 }
 
-async function onMainWindowUnload(_win: Window): Promise<void> {
-  // M2: keyController
+async function onMainWindowUnload(win: Window): Promise<void> {
+  controllers.get(win)?.detach();
+  controllers.delete(win);
 }
 
 function onShutdown(): void {
+  for (const controller of controllers.values()) controller.detach();
+  controllers.clear();
   unregisterDevBridge();
   ztoolkit.unregisterAll();
   addon.data.alive = false;
@@ -36,8 +46,14 @@ function onShutdown(): void {
   delete Zotero[addon.data.config.addonInstance];
 }
 
+/** For debugging (dev bridge): the controller of a main window. */
+function getController(win: Window): KeyController | undefined {
+  return controllers.get(win);
+}
+
 export default {
   onStartup,
+  getController,
   onShutdown,
   onMainWindowLoad,
   onMainWindowUnload,

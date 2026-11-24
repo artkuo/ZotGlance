@@ -61,7 +61,14 @@ export const INITIAL_STATE: KeyState = {
   lastQuery: "",
 };
 
-const MODIFIER_KEYS = new Set(["Shift", "Alt", "Meta", "Control", "CapsLock", "OS"]);
+const MODIFIER_KEYS = new Set([
+  "Shift",
+  "Alt",
+  "Meta",
+  "Control",
+  "CapsLock",
+  "OS",
+]);
 
 /** Typing is active when typed !== "" and now - typedAt < timeoutMs. */
 export function isTyping(
@@ -88,7 +95,11 @@ function toggleCard(state: KeyState, effects: Effect[]): KeyState {
   return state.cardOpen ? closeCard(state, effects) : openCard(state, effects);
 }
 
-function endTyping(state: KeyState, active: boolean, effects: Effect[]): KeyState {
+function endTyping(
+  state: KeyState,
+  active: boolean,
+  effects: Effect[],
+): KeyState {
   if (state.typed === "") return state;
   const next = { ...state, typed: "", typedAt: 0 };
   if (active) effects.push({ type: "endTyping" });
@@ -105,7 +116,7 @@ export function reduceKey(
   const active = isTyping(state, now, options);
   const effects: Effect[] = [];
   let next: KeyState = state;
-  let handled = false;
+  const handled = false;
 
   const isSpace = input.code === "Space";
 
@@ -158,7 +169,12 @@ export function reduceKey(
   }
 
   // 5. ⌘Y.
-  if (input.metaKey && input.key.toLowerCase() === "y" && !input.ctrlKey && !input.altKey) {
+  if (
+    input.metaKey &&
+    input.key.toLowerCase() === "y" &&
+    !input.ctrlKey &&
+    !input.altKey
+  ) {
     if (!options.cmdY) {
       return { state, handled: false, effects: [] };
     }
@@ -231,7 +247,7 @@ export function reduceKey(
   if (input.key === "Backspace" && active) {
     const text = next.typed.slice(0, -1);
     if (text.length > 0) {
-      next = { ...next, typed: text, typedAt: now };
+      next = { ...next, typed: text, typedAt: now, lastQuery: text };
       effects.push({ type: "typed", text });
     } else {
       next = endTyping(next, true, effects);

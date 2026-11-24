@@ -117,6 +117,11 @@ The listener is attached in capture phase to the main window's items tree (`#zot
   - **Creator is the exception.** The column shows “Kuo et al.”, which would hide co-authors, so Creator matches every author's surname from `item.getCreators()`.
 - On the first keystroke, build an index of the **visible rows only**: `itemsView.rowCount` and `itemsView.getRow(i).ref`. For each row store a lowercase word list from the matched columns. Cache it per view. Invalidate the cache when the items view refreshes or `Zotero.Notifier` reports item changes. Measure the build time on your largest collection. If it's too slow, index lazily from the focused row.
 - **Matching:** split the typed text on spaces. Every token must be a **prefix of some word** in the row, so “kuo 2010” matches both. Move the selection to the next matching row below the focused one, wrapping at the end. Nothing is hidden or filtered.
+- **Tiered matching, so a space isn't required where letters meet digits.** Search the whole list with tier 1; fall back to tier 2 only if tier 1 matches no row. Stricter tiers win, so a looser reading never takes the jump from an exact one.
+  1. **As typed:** tokens split on spaces only. “h2o” still matches the title word “H2O”.
+  2. **Letter/digit split:** each token is also split where a letter meets a digit. “jones2006” becomes “jones” + “2006”, matching Jones in Creator and 2006 in Year. “kuo2010walk” becomes “kuo” + “2010” + “walk”.
+  - No general “any split” tier (“kuowalk” → “kuo” + “walk”). It was considered and left out because short pieces match almost every row. Revisit only if real use asks for it.
+  - ⌘G and ⇧⌘G use the same tier that found the current match, so cycling stays consistent.
 - **Indicator:** a small pill at the bottom of the items pane reading `kuo 20▌`, plus a match count if it's cheap to compute. It hides 1.5 s after the last keystroke (a pref), or at once on Esc, Return or an arrow key.
 - Stop letters reaching the built-in `_handleTyping`, so the old and new type-to-select never run together. Ideally the plugin calls `stopPropagation()` on every printable key while the items tree has focus.
 - **Failure case to accept:** you type “smith”, pause past the timeout, then press Space meaning “smith j”, and the card opens instead. The visible indicator and the longer 1.5 s timeout make this rare, and pressing Space again closes the card.
@@ -161,10 +166,10 @@ The result is a throwaway “Space logs the focused item title” build. Record 
 
 **M4 — type-to-select on any field**
 
-- `matcher` and its tests: tokenising, prefix matching, wrap-around, next and previous.
+- `matcher` and its tests: tokenising, prefix matching, wrap-around, next and previous (done). Add tier 2: a pure `splitLetterDigit(tokens)` and a tiered `findMatch` that reports which tier matched, with contract tests first, then delegate.
 - `typeSelect`: indicator, timer and index cache. Add the type-to-select rows of the key table to `keyState`, with tests covering timer edges such as Space at 1.49 s and 1.51 s.
 - Profile the index build on your largest collection.
-- **Done when:** in a date-sorted collection, typing “kuo 2010” jumps to the right paper, ⌘G cycles through matches, and Space works as both a text space and Quick Look, as the table describes.
+- **Done when:** in a date-sorted collection, typing “kuo 2010” or “kuo2010” jumps to the right paper, ⌘G cycles through matches, and Space works as both a text space and Quick Look, as the table describes.
 
 **M5 — settings, packaging, release**
 

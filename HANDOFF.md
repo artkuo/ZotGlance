@@ -36,3 +36,22 @@ Work done in a forked side session after PLAN.md was finalised. Everything below
 1. **Delegate `keyState.ts`.** Write `test/unit/keyState.test.ts` as the contract (the key table in PLAN.md, covering phase 1 rows plus the type-to-select timer edges) and `tasks/keyState.md`, then run `scripts/delegate.sh keyState`.
 2. **Delegate the mapping part of `itemCard.ts`** the same way. Use plain-object fixtures that mirror `scripts/dev/seed.js`, with no Zotero import.
 3. **Claude, in parallel:** write `keyController.ts` (listener on `#item-tree-main-default`, focus check) and `quickLook.ts` (fixed overlay centred on `#zotero-layout-switcher`, `itemsView.onSelect`), then wire them in `hooks.ts` and check them in the dev instance with the window visible.
+
+## Update 2026-11-23 (later): M2 done
+
+- Contracts → Command Code → review → merge worked for both tasks.
+  - `keyState`: 25/25 tests. One fix on merge: Backspace now updates `lastQuery`.
+  - `itemCard`: 16/16 tests. One fix on merge: `&amp;` is now decoded last.
+  - Command Code's worktrees have no `node_modules`, so it can't run build or lint itself; `delegate.sh` runs them afterwards. Run `npm run lint:fix` after merging, because Prettier formatting isn't applied inside the worktree.
+- `keyController.ts`, `quickLook.ts` and `quicklook.css` are written and checked in the dev instance. See NOTES.md "M2 results".
+
+### Next steps now
+
+1. **M3 polish (Claude):**
+   - Fix the M3 notes in NOTES.md: show a highlighted note even past `MAX_NOTES`, note order, card size.
+   - Check the fade and a real ⌥Space keypress in a visible window.
+   - Decide focus edge cases (PLAN.md, "Risks").
+2. **M4:** `matcher.ts` is already done, except tier 2 (letter/digit split, PLAN.md “Tiered matching”, decided 2026-11-23). Write its contract tests and a `tasks/matcher-tiers.md`, then delegate it.
+   - Write `typeSelect.ts` (Claude): the indicator, the index cache over shown columns using `_getColumns()` and `getCellText`, with every creator surname for the Creator column.
+   - Wire the `typed`, `endTyping` and `findNext` effects in `keyController`, and turn the `typeSelect` pref on by default.
+   - The indicator's CSS could be delegated.

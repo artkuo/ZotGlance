@@ -86,3 +86,30 @@ To send trusted key events, use `nsITextInputProcessor` (`beginInputTransactionF
   - `mousedown` → `preventDefault()` so the list keeps focus.
   - Subscribe through `itemsView.onSelect`.
   - `itemsView` is replaced when you switch collection or library, so re-subscribe, or close the card, on collection change.
+
+## M2 results (2026-11-23)
+
+Built with `keyState.ts` and `itemCard.ts` (both delegated to Command Code against contract tests), plus `keyController.ts`, `quickLook.ts` and `addon/content/quicklook.css` (written by Claude). Checked in the dev instance with trusted key events, and with a window snapshot, since the window was hidden.
+
+**Working**
+
+- Space opens and closes the card, and focus stays on the list.
+- The card follows the selection through `itemsView.onSelect`.
+- An attachment or note row shows its parent with that child highlighted.
+- Standalone notes, books and the 40-author item ("+32 more") all render correctly.
+- Esc, ⌥Space and ⌘Y open and close the card as specified.
+- A click outside the card closes it; a click in the items list doesn't.
+- ⌘↓ opens the PDF in a reader tab and closes the card.
+- After a hot reload there is still exactly one card and one listener.
+
+**How it works**
+
+- The key listener is on the **window**, in capture phase, filtered to `target.id === "item-tree-main-default"` and the active element. It runs before React and survives the tree being re-rendered.
+- **Window snapshots:** `win.browsingContext.currentWindowGlobal.drawSnapshot(DOMRect, 2, "white")` works even while the window is hidden. Draw the result to a canvas, then save it with `IOUtils.write`.
+
+**For M3**
+
+- `getNotes()` returns child notes in alphabetical order by title, not the order they were created. The card lists them in that order.
+- If the highlighted note row is the 4th note or later, it falls behind "+N more", so it doesn't appear on the card. Show the highlighted note even when it's past `MAX_NOTES`.
+- The card covers most of the items list at the default 1000×600 window size. Check the size at larger windows, and in the stacked layout.
+- The fade and the real ⌥Space key (`" "`) still need checking by hand, in a visible window.
