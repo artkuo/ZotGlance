@@ -12,6 +12,7 @@ PLAN.md "M5" is the context. This task adds only files and settings; no plugin c
    - `unit`: `npm run test:unit`
 
    Leave out the template's `test` job (`npm run test`): it needs a Zotero binary.
+
 4. **`addon/manifest.json`:** set `strict_min_version` to `"10.0"` and `strict_max_version` to `"10.*"`. The plugin uses Zotero 10 internals and has been tested only on 10.0.9. Change nothing else in the manifest.
 5. **`.gitignore`:** make sure `.scaffold/`, `node_modules/`, `.env`, `.delegate-logs/` and `.commandcode/` are ignored. Add any that are missing; don't remove entries.
 
