@@ -9,6 +9,10 @@
   box-sizing: border-box;
   overflow: hidden;
   border-radius: 12px;
+  /* Drag the bottom-right corner to resize; quickLook.ts remembers it. */
+  resize: both;
+  min-width: 280px;
+  min-height: 160px;
   border: 1px solid var(--material-border-quarternary, rgba(0, 0, 0, 0.12));
   background: var(--material-background, #fff);
   color: var(--fill-primary, #1d1d1f);
@@ -42,6 +46,8 @@
 }
 
 #zotql-card .zotql-body {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   padding: 20px 26px 14px;
 }
@@ -127,13 +133,20 @@
   text-overflow: ellipsis;
 }
 
-/* Same size as the items list (Zotero's root font size, so it follows the
-   font-size setting), tight enough that a ~300-word abstract fits. */
+/* Default: the items list's size (Zotero's root font size, so it follows the
+   font-size setting), tight enough that a ~300-word abstract fits. Font and
+   size come from the settings pane via these variables. No max-width, so
+   widening the card widens the text. */
 #zotql-card .zotql-abstract {
   margin: 12px 0 0;
-  max-width: 75ch;
-  font-family: Charter, "Iowan Old Style", Georgia, serif;
-  font-size: 1rem;
+  font-family: var(
+    --zotql-abstract-font,
+    Charter,
+    "Iowan Old Style",
+    Georgia,
+    serif
+  );
+  font-size: var(--zotql-abstract-size, 1rem);
   line-height: 1.4;
 }
 

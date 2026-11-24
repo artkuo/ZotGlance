@@ -3,5 +3,16 @@
 /* eslint-disable */
 // @ts-nocheck
 export type FluentMessageId =
+  | 'pref-abstract-font'
+  | 'pref-abstract-size'
+  | 'pref-card-size'
+  | 'pref-card-title'
+  | 'pref-cmdy'
+  | 'pref-reset-size'
+  | 'pref-size-default'
+  | 'pref-timeout'
+  | 'pref-typeselect'
+  | 'pref-typeselect-help'
+  | 'pref-typeselect-title'
   | 'startup-begin'
   | 'startup-finish';

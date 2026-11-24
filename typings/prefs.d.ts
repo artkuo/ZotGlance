@@ -9,7 +9,11 @@ declare namespace _ZoteroTypes {
     PluginPrefsMap: {
       "cmdY": boolean;
       "typeSelect": boolean;
-      "typeSelectTimeoutMs": number;
+      "typeSelectTimeoutMs": string;
+      "abstractFont": string;
+      "abstractSize": string;
+      "cardWidth": number;
+      "cardHeight": number;
     };
   }
 }

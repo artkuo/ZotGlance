@@ -81,3 +81,12 @@ See NOTES.md "M3 results". The delegated highlighted-note change merged cleanly 
 
 1. **You, by hand:** ⌥Space and the fade (from M3), and type-to-select in a real-sized library, to check the first-keystroke delay.
 2. **M5:** settings pane (type-to-select on/off, matched columns, timeout, ⌘Y), README, release workflow, plugin-list submission. Mostly delegable.
+
+## Update 2026-11-23 (late): settings pane, resizable card
+
+The user tested M4 in their real Zotero ("works very well") and asked for abstract font and size settings and a resizable card. Done: see NOTES.md "Settings pane and resizable card". The pane also has ⌘Y, type-to-select on/off and the typing timeout.
+
+### Next steps now
+
+1. **M5, the rest:** a choice of matched columns (currently always the shown columns), icons (the manifest points at missing files), README, release workflow, plugin-list submission.
+2. **You, by hand:** ⌥Space, the fade, and first-keystroke speed in a large library.

@@ -1,0 +1,15 @@
+pref-card-title = Quick Look card
+pref-abstract-font = Abstract font:
+pref-abstract-size = Abstract size:
+pref-size-default =
+    .label = Same as the items list
+pref-card-size = The card can be resized by dragging its bottom-right corner. Its size is remembered.
+pref-reset-size =
+    .label = Reset Card Size
+pref-cmdy =
+    .label = ⌘Y also opens and closes the card
+pref-typeselect-title = Type to select
+pref-typeselect =
+    .label = Match what I type against all shown columns and every author
+pref-typeselect-help = When off, Zotero's own type-to-select (sort column only) is used.
+pref-timeout = Typing ends after:

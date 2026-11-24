@@ -150,3 +150,16 @@ Built with `keyState.ts` and `itemCard.ts` (both delegated to Command Code again
 - **⌘G / ⇧⌘G:** next and previous match, with the counter updated. They reuse the tier that found the current match.
 - **Word cache:** keyed by item id, so sorting and switching collections keep it. It's cleared when the shown columns change, and item notifier events drop the changed items.
 - **Speed:** 39 rows took 1.8 ms cold and 0.3 ms warm (about 45 µs per row cold, mostly Zotero's `_getRowData`). At that rate, 10,000 rows would take about 0.5 s on the first keystroke. Measure in a real library before release, and index lazily from the focused row if it's slow (PLAN.md).
+
+## Settings pane and resizable card (2026-11-23)
+
+- **Settings pane:** `addon/content/preferences.xhtml`, registered with `Zotero.PreferencePanes.register` in `onStartup`. The scaffold prefixes `preference="..."` with `extensions.zotero.zotql.` and `data-l10n-id`s with `zotql-`. The FTL file `preferences.ftl` becomes `zotql-preferences.ftl`, so the XHTML links `__addonRef__-preferences.ftl`.
+- **Prefs from the pane are strings:** Zotero's binding writes `elem.value`, so menulist-backed prefs (`abstractSize`, `typeSelectTimeoutMs`) are string prefs, and the code reads them with `Number()`.
+- **Inline handlers work:** the Reset Card Size button calls `Zotero.ZotQL.hooks.onPrefsEvent('resetCardSize')` from `oncommand`.
+- **Abstract font and size:** `--zotql-abstract-font` and `--zotql-abstract-size` are set on the card each time it opens. The abstract no longer has `max-width: 75ch`, so widening the card widens the text.
+- **Resizing:** the card has CSS `resize: both`.
+  - Gotcha: `preventDefault()` on mousedown stops Firefox's resize grip, so the card's mousedown handler skips it within 16 px of the bottom-right corner, then refocuses the items list on mouseup.
+  - On mousedown the height is pinned and the cap raised to the full pane, so a drag can go past the automatic 70% cap without a jump.
+  - On mouseup a changed size is saved in `cardWidth`/`cardHeight` (px; 0 = automatic). It's clamped to the pane on every open, and stays centred.
+  - Tested with `windowUtils.sendMouseEvent` drags: 640×493 → 760×643, kept after reopening.
+- **No icon yet:** `manifest.json` points at `content/icons/favicon*.png`, which don't exist, so the settings sidebar shows a placeholder. Add icons in M5.

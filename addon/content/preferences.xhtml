@@ -1,0 +1,77 @@
+<linkset>
+  <html:link rel="localization" href="__addonRef__-preferences.ftl" />
+</linkset>
+<vbox id="zotero-prefpane-__addonRef__">
+  <groupbox>
+    <label><html:h2 data-l10n-id="pref-card-title" /></label>
+    <hbox align="center">
+      <label data-l10n-id="pref-abstract-font" control="zotql-abstract-font" />
+      <menulist
+        id="zotql-abstract-font"
+        preference="abstractFont"
+        native="true"
+      >
+        <menupopup>
+          <menuitem value="serif" label="Charter" />
+          <menuitem value="iowan" label="Iowan Old Style" />
+          <menuitem value="georgia" label="Georgia" />
+          <menuitem value="palatino" label="Palatino" />
+          <menuitem value="times" label="Times New Roman" />
+          <menuitem value="sans" label="System (San Francisco)" />
+          <menuitem value="helvetica" label="Helvetica Neue" />
+          <menuitem value="avenir" label="Avenir Next" />
+        </menupopup>
+      </menulist>
+    </hbox>
+    <hbox align="center">
+      <label data-l10n-id="pref-abstract-size" control="zotql-abstract-size" />
+      <menulist
+        id="zotql-abstract-size"
+        preference="abstractSize"
+        native="true"
+      >
+        <menupopup>
+          <menuitem value="85" label="85%" />
+          <menuitem value="90" label="90%" />
+          <menuitem value="100" data-l10n-id="pref-size-default" />
+          <menuitem value="110" label="110%" />
+          <menuitem value="120" label="120%" />
+          <menuitem value="135" label="135%" />
+          <menuitem value="150" label="150%" />
+        </menupopup>
+      </menulist>
+    </hbox>
+    <description data-l10n-id="pref-card-size" />
+    <hbox>
+      <button
+        data-l10n-id="pref-reset-size"
+        oncommand="Zotero.__addonInstance__.hooks.onPrefsEvent('resetCardSize')"
+      />
+    </hbox>
+    <checkbox preference="cmdY" data-l10n-id="pref-cmdy" native="true" />
+  </groupbox>
+  <groupbox>
+    <label><html:h2 data-l10n-id="pref-typeselect-title" /></label>
+    <checkbox
+      preference="typeSelect"
+      data-l10n-id="pref-typeselect"
+      native="true"
+    />
+    <description data-l10n-id="pref-typeselect-help" />
+    <hbox align="center">
+      <label data-l10n-id="pref-timeout" control="zotql-timeout" />
+      <menulist
+        id="zotql-timeout"
+        preference="typeSelectTimeoutMs"
+        native="true"
+      >
+        <menupopup>
+          <menuitem value="1000" label="1 s" />
+          <menuitem value="1500" label="1.5 s" />
+          <menuitem value="2000" label="2 s" />
+          <menuitem value="3000" label="3 s" />
+        </menupopup>
+      </menulist>
+    </hbox>
+  </groupbox>
+</vbox>

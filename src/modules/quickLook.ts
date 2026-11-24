@@ -14,11 +14,28 @@ import {
   type CardModel,
   type ItemData,
 } from "./itemCard";
+import { getPref, setPref } from "../utils/prefs";
 
 export const HTML_NS = "http://www.w3.org/1999/xhtml";
 const ROOT_ID = "zotql-card";
 const STYLE_ID = "zotql-card-style";
 const FADE_MS = 120;
+const MIN_WIDTH = 280;
+const MIN_HEIGHT = 160;
+/** Size of the resize grip at the card's bottom-right corner. */
+const GRIP_PX = 16;
+
+/** Abstract font choices (the `abstractFont` pref) -> CSS font stacks. */
+const ABSTRACT_FONTS: Record<string, string> = {
+  serif: 'Charter, "Iowan Old Style", Georgia, serif',
+  iowan: '"Iowan Old Style", Charter, Georgia, serif',
+  georgia: "Georgia, serif",
+  palatino: 'Palatino, "Palatino Linotype", serif',
+  times: '"Times New Roman", Times, serif',
+  sans: 'system-ui, -apple-system, "Helvetica Neue", sans-serif',
+  helvetica: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+  avenir: '"Avenir Next", Avenir, "Helvetica Neue", sans-serif',
+};
 
 const FIELDS = [
   "title",
@@ -104,6 +121,7 @@ export class QuickLook {
     const item = this.currentItem();
     if (!item) return false;
     this.ensureDom();
+    this.applyStylePrefs();
     this.openState = true;
     this.subscribe();
     this.render(item);
@@ -311,7 +329,14 @@ export class QuickLook {
     root.setAttribute("role", "dialog");
     root.setAttribute("aria-label", "Quick Look");
     // Keep keyboard focus in the items list when the card is clicked.
-    root.addEventListener("mousedown", (e) => e.preventDefault());
+    // Except on the resize grip: preventDefault would stop the drag.
+    root.addEventListener("mousedown", (e: MouseEvent) => {
+      const r = root.getBoundingClientRect();
+      const onGrip =
+        r.right - e.clientX <= GRIP_PX && r.bottom - e.clientY <= GRIP_PX;
+      if (!onGrip) e.preventDefault();
+      this.startResize(onGrip);
+    });
     this.body = this.el("div", "zotql-body");
     root.appendChild(this.body);
     doc.documentElement!.appendChild(root);
@@ -325,15 +350,73 @@ export class QuickLook {
       this.doc.getElementById("zotero-layout-switcher") ??
       this.doc.documentElement!;
     const r = anchor.getBoundingClientRect();
-    const width = Math.max(280, Math.min(640, r.width - 32));
-    const maxHeight = Math.max(
-      200,
-      Math.min(r.height - 48, this.win.innerHeight * 0.7),
-    );
+    // A size the user dragged to, if any, else automatic.
+    const savedWidth = Number(getPref("cardWidth")) || 0;
+    const savedHeight = Number(getPref("cardHeight")) || 0;
+    const room = Math.max(MIN_HEIGHT, r.height - 48);
+    const width =
+      savedWidth > 0
+        ? Math.max(MIN_WIDTH, Math.min(savedWidth, r.width - 16))
+        : Math.max(MIN_WIDTH, Math.min(640, r.width - 32));
+    const maxHeight =
+      savedHeight > 0
+        ? room
+        : Math.max(200, Math.min(room, this.win.innerHeight * 0.7));
     root.style.left = `${Math.round(r.left + (r.width - width) / 2)}px`;
     root.style.top = `${Math.round(r.top + 24)}px`;
     root.style.width = `${Math.round(width)}px`;
     root.style.maxHeight = `${Math.round(maxHeight)}px`;
+    root.style.height =
+      savedHeight > 0 ? `${Math.round(Math.min(savedHeight, room))}px` : "";
+  }
+
+  /**
+   * The card has CSS `resize: both`. On mousedown, free its height to the
+   * room available and fix it at its current size, so a drag on the corner
+   * can grow it past the automatic 70% cap without a jump. On mouseup, keep
+   * a changed size in prefs; otherwise go back to the normal placement.
+   */
+  private startResize(onGrip: boolean): void {
+    const root = this.root;
+    const anchor = this.doc.getElementById("zotero-layout-switcher");
+    if (!root || !anchor) return;
+    const startW = root.offsetWidth;
+    const startH = root.offsetHeight;
+    root.style.height = `${startH}px`;
+    root.style.maxHeight = `${Math.max(MIN_HEIGHT, anchor.getBoundingClientRect().height - 48)}px`;
+    const onUp = () => {
+      this.win.removeEventListener("mouseup", onUp, true);
+      // A press on the grip may have taken focus from the items list.
+      if (onGrip && this.openState) {
+        (
+          this.doc.getElementById(
+            "item-tree-main-default",
+          ) as HTMLElement | null
+        )?.focus();
+      }
+      const w = root.offsetWidth;
+      const h = root.offsetHeight;
+      if (Math.abs(w - startW) > 2 || Math.abs(h - startH) > 2) {
+        setPref("cardWidth", Math.round(w));
+        setPref("cardHeight", Math.round(h));
+      }
+      this.place();
+    };
+    this.win.addEventListener("mouseup", onUp, true);
+  }
+
+  /** Abstract font and size from the settings pane. */
+  private applyStylePrefs(): void {
+    const root = this.root;
+    if (!root) return;
+    const font =
+      ABSTRACT_FONTS[String(getPref("abstractFont"))] ?? ABSTRACT_FONTS.serif;
+    const size = Number(getPref("abstractSize")) || 100;
+    root.style.setProperty("--zotql-abstract-font", font);
+    root.style.setProperty(
+      "--zotql-abstract-size",
+      `${Math.max(50, Math.min(size, 200)) / 100}rem`,
+    );
   }
 
   private render(item: Zotero.Item): void {
