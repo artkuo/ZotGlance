@@ -72,6 +72,7 @@ test("defaults", () => {
     typed: "",
     typedAt: 0,
     lastQuery: "",
+    helpOpen: false,
   });
 });
 
