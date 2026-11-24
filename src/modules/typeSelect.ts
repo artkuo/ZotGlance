@@ -15,12 +15,22 @@ import {
   wordsFrom,
 } from "./matcher";
 import { ensureStylesheet, HTML_NS } from "./quickLook";
+import { getPref } from "../utils/prefs";
 
 const PILL_ID = "zotql-typeselect";
 const ITEMS_PANE_ID = "zotero-items-tree";
 /** Columns whose cell text isn't worth matching (icons and counts). */
 const SKIP_COLUMNS = new Set(["hasAttachment", "numNotes"]);
 const CREATOR_COLUMN = "firstCreator";
+/** "Fixed columns" setting: pref name -> the column's dataKey. */
+const FIXED_COLUMNS = {
+  matchTitle: "title",
+  matchCreator: CREATOR_COLUMN,
+  matchYear: "year",
+  matchPublication: "publicationTitle",
+  matchPublisher: "publisher",
+  matchCitationKey: "citationKey",
+} as const;
 
 interface Search {
   text: string;
@@ -126,8 +136,25 @@ export class TypeSelect {
     return f >= 0 && f < iv.rowCount ? f : 0;
   }
 
-  /** The shown columns to match, and a key that changes when they do. */
+  /** The columns to match; clears the word cache when they change. */
   private columns(iv: any): string[] {
+    let cols: string[] = [];
+    if (getPref("typeSelectColumns") === "fixed") {
+      cols = (Object.keys(FIXED_COLUMNS) as (keyof typeof FIXED_COLUMNS)[])
+        .filter((pref) => getPref(pref))
+        .map((pref) => FIXED_COLUMNS[pref]);
+    }
+    if (cols.length === 0) cols = this.shownColumns(iv);
+    const key = cols.join(",");
+    if (key !== this.columnKey) {
+      this.columnKey = key;
+      this.words.clear();
+    }
+    return cols;
+  }
+
+  /** The items list's visible columns. */
+  private shownColumns(iv: any): string[] {
     let cols: string[] = [];
     try {
       cols = (iv._getColumns?.() ?? [])
@@ -136,13 +163,7 @@ export class TypeSelect {
     } catch {
       // Fall back to Zotero's defaults.
     }
-    if (cols.length === 0) cols = ["title", CREATOR_COLUMN];
-    const key = cols.join(",");
-    if (key !== this.columnKey) {
-      this.columnKey = key;
-      this.words.clear();
-    }
-    return cols;
+    return cols.length > 0 ? cols : ["title", CREATOR_COLUMN];
   }
 
   /** Row index -> words, for the columns shown now. */

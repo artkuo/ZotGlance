@@ -21,6 +21,7 @@ async function onStartup() {
     pluginID: addon.data.config.addonID,
     src: rootURI + "content/preferences.xhtml",
     label: addon.data.config.addonName,
+    image: `chrome://${addon.data.config.addonRef}/content/icons/favicon.png`,
   });
 
   // Dev-only (no-op in production builds); user approved 2026-11-23.
@@ -54,8 +55,21 @@ function onShutdown(): void {
 }
 
 /** Events from the settings pane (addon/content/preferences.xhtml). */
-function onPrefsEvent(type: string): void {
-  if (type === "resetCardSize") {
+function onPrefsEvent(type: string, data?: { window: Window }): void {
+  if (type === "load" && data) {
+    // Grey out the fixed-column checkboxes unless "these columns" is chosen.
+    const doc = data.window.document;
+    const group = doc.getElementById("zotql-columns") as any;
+    const sync = () => {
+      const fixed = group?.value === "fixed";
+      for (const box of doc.querySelectorAll<any>(".zotql-col")) {
+        box.disabled = !fixed;
+      }
+    };
+    group?.addEventListener("command", () => data.window.setTimeout(sync));
+    group?.addEventListener("syncfrompreference", sync);
+    sync();
+  } else if (type === "resetCardSize") {
     clearPref("cardWidth");
     clearPref("cardHeight");
   }

@@ -27,7 +27,7 @@ while (words.length < 300) {
 const text = words
   .slice(0, 300)
   .join(" ")
-  .replace(/[,;:]?$/, ".");
+  .replace(/[,;:.]*$/, ".");
 const LIB = Zotero.Libraries.userLibraryID;
 const coll = Zotero.Collections.getByLibrary(LIB).find(
   (c) => c.name === "zotQL fixtures",
@@ -35,14 +35,16 @@ const coll = Zotero.Collections.getByLibrary(LIB).find(
 let item = (await Zotero.Items.getAll(LIB)).find(
   (it) =>
     it.isRegularItem() &&
-    it.getField("title").startsWith("A 300-word abstract"),
+    /^(A 300-word abstract|Energetics of walking over uneven)/.test(
+      it.getField("title"),
+    ),
 );
 if (!item) {
   item = new Zotero.Item("journalArticle");
   item.libraryID = LIB;
   item.setField(
     "title",
-    "A 300-word abstract on the energetics of walking over uneven terrain at several speeds",
+    "Energetics of walking over uneven terrain at several speeds",
   );
   item.setField("publicationTitle", "Journal of Fixture Biomechanics");
   item.setField("date", "2012");

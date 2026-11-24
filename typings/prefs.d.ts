@@ -14,6 +14,13 @@ declare namespace _ZoteroTypes {
       "abstractSize": string;
       "cardWidth": number;
       "cardHeight": number;
+      "typeSelectColumns": string;
+      "matchTitle": boolean;
+      "matchCreator": boolean;
+      "matchYear": boolean;
+      "matchPublication": boolean;
+      "matchPublisher": boolean;
+      "matchCitationKey": boolean;
     };
   }
 }

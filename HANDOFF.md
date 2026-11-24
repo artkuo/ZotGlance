@@ -90,3 +90,15 @@ The user tested M4 in their real Zotero ("works very well") and asked for abstra
 
 1. **M5, the rest:** a choice of matched columns (currently always the shown columns), icons (the manifest points at missing files), README, release workflow, plugin-list submission.
 2. **You, by hand:** ⌥Space, the fade, and first-keystroke speed in a large library.
+
+## Update 2026-11-23 (late night): M5 code done
+
+- Matched-columns setting, icon, README with screenshots (`docs/`), manifest versions, CI unit-test job. LICENSE (AGPL-3.0) and the release workflow were already in place from M0. See NOTES.md "M5".
+- The git history was scanned: there are no secrets, `.env` was never committed, and there's no personal email.
+
+### Next steps now (need the user's go-ahead: outward-facing)
+
+1. Create the public GitHub repo `artkuo/zotQL` and push `main`.
+2. Tag `v0.1.0` and push the tag. The release workflow builds and publishes `zot-ql.xpi` and `update.json`.
+3. The user installs the release `.xpi` in their real Zotero.
+4. Submit to Zotero's plugin list (zotero.org/support/plugins): check the current submission instructions first.

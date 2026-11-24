@@ -162,4 +162,12 @@ Built with `keyState.ts` and `itemCard.ts` (both delegated to Command Code again
   - On mousedown the height is pinned and the cap raised to the full pane, so a drag can go past the automatic 70% cap without a jump.
   - On mouseup a changed size is saved in `cardWidth`/`cardHeight` (px; 0 = automatic). It's clamped to the pane on every open, and stays centred.
   - Tested with `windowUtils.sendMouseEvent` drags: 640×493 → 760×643, kept after reopening.
-- **No icon yet:** `manifest.json` points at `content/icons/favicon*.png`, which don't exist, so the settings sidebar shows a placeholder. Add icons in M5.
+- **Icon:** the settings sidebar needs `image` in `PreferencePanes.register`, or it shows a placeholder. The M0 scaffold had copied zotquicksearch's icons; M5 replaced them with zotQL's own (a card over a space bar), drawn on a canvas in the dev Zotero.
+
+## M5 (2026-11-23)
+
+- **Matched columns:** `typeSelectColumns` is `"shown"` (default) or `"fixed"`. "fixed" uses the `match*` bool prefs: title, creator, year, publication, publisher, citation key. `getCellText` works for hidden columns, because `_getRowData` computes every column from `getColumns()`, hidden or not. Checked: with Year hidden, "kuo2010" doesn't match with shown columns, and does with fixed.
+- **Pane script:** the pane's `onload` calls `hooks.onPrefsEvent('load', { window })`, which greys out the fixed-column checkboxes unless "these columns" is chosen (radiogroup `command` and `syncfrompreference`).
+- **Manifest:** `strict_min_version` is `10.0` and `strict_max_version` `10.*`, since the plugin is tested only on 10.0.9 and uses Zotero 10 internals. Raise the maximum after testing each new major version.
+- **CI:** lint, build and unit tests. Zotero's own `npm run test` is left out because it needs a Zotero binary.
+- **README screenshots** in `docs/` come from the dev library. The dev window must be visible (front, not occluded) or snapshots are stale and selection changes wait for rAF. `win.document.hidden` tells you which.

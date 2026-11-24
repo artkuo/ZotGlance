@@ -1,7 +1,10 @@
 <linkset>
   <html:link rel="localization" href="__addonRef__-preferences.ftl" />
 </linkset>
-<vbox id="zotero-prefpane-__addonRef__">
+<vbox
+  id="zotero-prefpane-__addonRef__"
+  onload="Zotero.__addonInstance__.hooks.onPrefsEvent('load', { window })"
+>
   <groupbox>
     <label><html:h2 data-l10n-id="pref-card-title" /></label>
     <hbox align="center">
@@ -58,6 +61,49 @@
       native="true"
     />
     <description data-l10n-id="pref-typeselect-help" />
+    <label data-l10n-id="pref-columns" />
+    <radiogroup id="zotql-columns" preference="typeSelectColumns">
+      <radio value="shown" data-l10n-id="pref-columns-shown" />
+      <radio value="fixed" data-l10n-id="pref-columns-fixed" />
+    </radiogroup>
+    <vbox style="margin-inline-start: 24px">
+      <checkbox
+        class="zotql-col"
+        preference="matchTitle"
+        data-l10n-id="pref-col-title"
+        native="true"
+      />
+      <checkbox
+        class="zotql-col"
+        preference="matchCreator"
+        data-l10n-id="pref-col-creator"
+        native="true"
+      />
+      <checkbox
+        class="zotql-col"
+        preference="matchYear"
+        data-l10n-id="pref-col-year"
+        native="true"
+      />
+      <checkbox
+        class="zotql-col"
+        preference="matchPublication"
+        data-l10n-id="pref-col-publication"
+        native="true"
+      />
+      <checkbox
+        class="zotql-col"
+        preference="matchPublisher"
+        data-l10n-id="pref-col-publisher"
+        native="true"
+      />
+      <checkbox
+        class="zotql-col"
+        preference="matchCitationKey"
+        data-l10n-id="pref-col-citationkey"
+        native="true"
+      />
+    </vbox>
     <hbox align="center">
       <label data-l10n-id="pref-timeout" control="zotql-timeout" />
       <menulist

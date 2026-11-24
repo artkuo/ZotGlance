@@ -11,3 +11,12 @@ pref("abstractSize", "100");
 // Card size in px after the user resizes it; 0 = automatic.
 pref("cardWidth", 0);
 pref("cardHeight", 0);
+// Columns type-to-select matches: "shown" (the items list's visible
+// columns) or "fixed" (the match* prefs below, whether shown or not).
+pref("typeSelectColumns", "shown");
+pref("matchTitle", true);
+pref("matchCreator", true);
+pref("matchYear", true);
+pref("matchPublication", false);
+pref("matchPublisher", false);
+pref("matchCitationKey", false);
