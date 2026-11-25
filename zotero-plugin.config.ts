@@ -47,7 +47,8 @@ export default defineConfig({
         process.env.ZOTGLANCE_DEV_PORT || 23129,
       ),
       // Enables the dev-only eval bridge (src/modules/devBridge.ts).
-      "extensions.zotero.zotglance.devToken": process.env.ZOTGLANCE_DEV_TOKEN || "",
+      "extensions.zotero.zotglance.devToken":
+        process.env.ZOTGLANCE_DEV_TOKEN || "",
     },
   },
 
