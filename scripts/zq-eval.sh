@@ -6,15 +6,15 @@
 #   scripts/zq-eval.sh 'return Zotero.version'
 #   scripts/zq-eval.sh < snippet.js
 #
-# Needs ZOTQL_DEV_PORT and ZOTQL_DEV_TOKEN in .env. Only talks to the dev
+# Needs ZOTGLANCE_DEV_PORT and ZOTGLANCE_DEV_TOKEN in .env. Only talks to the dev
 # instance's port, never the real Zotero (23119).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 env_get() { sed -n "s/^$1[[:space:]]*=[[:space:]]*//p" .env | tail -1; }
-PORT=$(env_get ZOTQL_DEV_PORT)
-TOKEN=$(env_get ZOTQL_DEV_TOKEN)
+PORT=$(env_get ZOTGLANCE_DEV_PORT)
+TOKEN=$(env_get ZOTGLANCE_DEV_TOKEN)
 if [[ -z "$PORT" || -z "$TOKEN" ]]; then
-  echo "zq-eval: set ZOTQL_DEV_PORT and ZOTQL_DEV_TOKEN in .env" >&2
+  echo "zq-eval: set ZOTGLANCE_DEV_PORT and ZOTGLANCE_DEV_TOKEN in .env" >&2
   exit 2
 fi
 if [[ "$PORT" == "23119" ]]; then

@@ -44,10 +44,10 @@ export default defineConfig({
     prefs: {
       // Keep the dev instance's HTTP server off the real Zotero's port 23119.
       "extensions.zotero.httpServer.port": Number(
-        process.env.ZOTQL_DEV_PORT || 23129,
+        process.env.ZOTGLANCE_DEV_PORT || 23129,
       ),
       // Enables the dev-only eval bridge (src/modules/devBridge.ts).
-      "extensions.zotero.zotglance.devToken": process.env.ZOTQL_DEV_TOKEN || "",
+      "extensions.zotero.zotglance.devToken": process.env.ZOTGLANCE_DEV_TOKEN || "",
     },
   },
 

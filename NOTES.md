@@ -4,14 +4,14 @@ Findings from running code against Zotero 10.0.9 in the dev profile: what the re
 
 ## Dev setup (M0)
 
-- `npm start` opens a **separate** Zotero using profile `~/Zotero-dev/zotql/profile`, data folder `~/Zotero-dev/zotql/data` and HTTP port 23129. Your real Zotero, profile and library (port 23119) are untouched. All the paths are in `.env`, which is git-ignored.
+- `npm start` opens a **separate** Zotero using profile `~/Zotero-dev/zotglance/profile`, data folder `~/Zotero-dev/zotglance/data` and HTTP port 23129. Your real Zotero, profile and library (port 23119) are untouched. All the paths are in `.env`, which is git-ignored.
 - **Kill-command hazard.** On macOS, zotero-plugin-scaffold's default exit handler runs `kill -9 $(ps -x | grep zotero)`, which force-kills the real Zotero too. `.env` sets `ZOTERO_PLUGIN_KILL_COMMAND` to `pkill -f` on the dev profile path only. Tested: stopping `npm start` left the real Zotero running.
 - **Hot reload** works: saving a file in `src/` rebuilds the plugin and reloads it in the dev instance.
 - **Dev eval bridge** (`src/modules/devBridge.ts`, `scripts/zq-eval.sh`): a POST endpoint, `/zotglance/dev/eval`, that runs a JavaScript async function body inside the dev Zotero, with `Zotero`, `win` and `addon` in scope, and returns the result as JSON.
   - It's registered only in development builds, and only if the dev profile has the `extensions.zotero.zotglance.devToken` pref, which the config writes from `.env`.
   - Requests without the token get 403, and Zotero itself drops requests that look like they come from a browser.
   - It's a no-op in production builds. The user approved it on 2026-11-23.
-- **Test library:** `scripts/zq-eval.sh < scripts/dev/seed.js` creates the “zotQL fixtures” collection with 38 rows. It's safe to run more than once. It includes:
+- **Test library:** `scripts/zq-eval.sh < scripts/dev/seed.js` creates the “ZotGlance fixtures” collection with 38 rows. It's safe to run more than once. It includes:
   - a journal article with 4 child notes, a PDF and a link attachment
   - a 40-author article, a book, a thesis and a preprint
   - an item with no abstract, and one with an HTML abstract and a long title
